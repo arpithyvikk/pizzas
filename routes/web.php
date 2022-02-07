@@ -162,7 +162,7 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 
 	// for pizza 
 	Route::post('pizzas/pizza-data', 'PizzaController@pizzaData')->name('pizza.data');
-	// Route::get('pizzas/product_pizza/{id}','PizzaController@productPizzaData');
+	Route::get('pizzas/product_pizza/{id}','PizzaController@productPizzaData');
 	// Route::get('pizzas/lims_product_search', 'PizzaController@limsProductSearch')->name('product_pizza.search');
 	// Route::post('pizzas/add_payment', 'PizzaController@addPayment')->name('pizza.add-payment');
 	// Route::get('pizzas/getpayment/{id}', 'PizzaController@getPayment')->name('pizza.get-payment');
@@ -170,7 +170,7 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 	// Route::post('pizzas/deletepayment', 'PizzaController@deletePayment')->name('pizza.delete-payment');
 	// Route::get('pizzas/pizza_by_csv', 'PizzaController@pizzaByCsv');
 	// Route::post('importpizza', 'PizzaController@importPizza')->name('pizza.import');
-	// Route::post('pizzas/deletebyselection', 'PizzaController@deleteBySelection');
+	Route::post('pizzas/deletebyselection', 'PizzaController@deleteBySelection');
 	Route::resource('pizzas', 'PizzaController');
 
 	Route::get('transfers/product_transfer/{id}','TransferController@productTransferData');

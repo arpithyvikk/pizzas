@@ -1455,7 +1455,7 @@
     <script>
         if ('serviceWorker' in navigator ) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/salepro/service-worker.js').then(function(registration) {
+                navigator.serviceWorker.register('/pizzas/service-worker.js').then(function(registration) {
                     // Registration was successful
                     console.log('ServiceWorker registration successful with scope: ', registration.scope);
                 }, function(err) {

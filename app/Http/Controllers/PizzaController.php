@@ -68,20 +68,15 @@ class PizzaController extends Controller
     {
         $columns = array(
             1 => 'created_at',
-            2 => 'reference_no',
-            5 => 'grand_total',
-            6 => 'paid_amount',
+            2 => 'image',
+            3 => 'name',
+            4 => 'size',
+            5 => 'crust_type',
+            6 => 'price',
+            7 => 'total_item',
         );
 
-        
-        if (Auth::user()->role_id > 2 && config('staff_access') == 'own') {
-            $totalData = Pizza::where('user_id', Auth::id())
-                ->whereDate('created_at', '>=', $request->input('starting_date'))
-                ->whereDate('created_at', '<=', $request->input('ending_date'))
-                ->count();
-        } else {
-            $totalData = Pizza::whereDate('created_at', '>=', $request->input('starting_date'))->whereDate('created_at', '<=', $request->input('ending_date'))->count();
-        }
+        $totalData = Pizza::whereDate('created_at', '>=', $request->input('starting_date'))->whereDate('created_at', '<=', $request->input('ending_date'))->count();
 
         $totalFiltered = $totalData;
 
@@ -103,8 +98,6 @@ class PizzaController extends Controller
             ->limit($limit)
             ->orderBy($order, $dir)
             ->get();
-    
-
         } 
         else 
         {
@@ -114,17 +107,51 @@ class PizzaController extends Controller
                 $pizzas = Pizza::select('pizzas.*')
                     ->whereDate('pizzas.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
                     ->where('pizzas.user_id', Auth::id())
-                    ->offset($start)
+                    ->orwhere([
+                        ['pizzas.name', 'LIKE', "%{$search}%"],
+                        ['pizzas.user_id', Auth::id()]
+                    ])
+                    ->orwhere([
+                        ['pizzas.created_at', 'LIKE', "%{$search}%"],
+                        ['pizzas.user_id', Auth::id()]
+                    ])
+                    ->orwhere([
+                        ['pizzas.price', 'LIKE', "%{$search}%"],
+                        ['pizzas.user_id', Auth::id()]
+                    ])
+                    ->orwhere([
+                        ['pizzas.note', 'LIKE', "%{$search}%"],
+                        ['pizzas.user_id', Auth::id()]
+                    ])
+                   ->offset($start)
                     ->limit($limit)
                     ->orderBy($order, $dir)->get();
 
                 $totalFiltered = Pizza::select('pizzas.*')
                     ->whereDate('pizzas.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
+                    ->orwhere([
+                        ['pizzas.name', 'LIKE', "%{$search}%"],
+                        ['pizzas.user_id', Auth::id()]
+                    ])
+                    ->orwhere([
+                        ['pizzas.created_at', 'LIKE', "%{$search}%"],
+                        ['pizzas.user_id', Auth::id()]
+                    ])
+                    ->orwhere([
+                        ['pizzas.price', 'LIKE', "%{$search}%"],
+                        ['pizzas.user_id', Auth::id()]
+                    ])
+                    ->orwhere([
+                        ['pizzas.note', 'LIKE', "%{$search}%"],
+                        ['pizzas.user_id', Auth::id()]
+                    ])
                     ->where('pizzas.user_id', Auth::id())
                     ->count();
             } else {
                 $pizzas = Pizza::select('pizzas.*')
                     ->whereDate('pizzas.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
+                    ->orwhere('pizzas.name', 'LIKE', "%{$search}%")->orwhere('pizzas.created_at', 'LIKE', "%{$search}%")
+                    ->orwhere('pizzas.price', 'LIKE', "%{$search}%")->orwhere('pizzas.note', 'LIKE', "%{$search}%")
                     ->offset($start)
                     ->limit($limit)
                     ->orderBy($order, $dir)
@@ -132,6 +159,8 @@ class PizzaController extends Controller
 
                 $totalFiltered = Pizza::select('pizzas.*')
                     ->whereDate('pizzas.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
+                    ->orwhere('pizzas.name', 'LIKE', "%{$search}%")->orwhere('pizzas.created_at', 'LIKE', "%{$search}%")
+                    ->orwhere('pizzas.price', 'LIKE', "%{$search}%")->orwhere('pizzas.note', 'LIKE', "%{$search}%")
                     ->count();
             }
         }
@@ -141,8 +170,57 @@ class PizzaController extends Controller
                 $nestedData['id'] = $pizza->id;
                 $nestedData['key'] = $key;
                 $nestedData['date'] = date(config('date_format'), strtotime($pizza->created_at->toDateString()));
+                $nestedData['name'] = $pizza->name;
+                $nestedData['price'] = '₹'.$pizza->price;
+                $nestedData['image'] = $pizza->image;
+                $nestedData['total_item'] = $pizza->total_item;
+                $nestedData['note'] = $pizza->note;
+              
+                if($pizza->size == 's')
+                {
+                    $pizza->size = 'Small';
+                }
+                elseif($pizza->size == 'm')
+                {
+                    $pizza->size = 'Medium';
+                }
+                elseif($pizza->size == 'l')
+                {
+                    $pizza->size = 'Large';
+                }
+                else
+                {
+                    $pizza->size = 'size not define';
+                }
 
-                
+                $nestedData['size'] = $pizza->size;
+
+                switch ($pizza->crust_type) {
+                    case 'c1':
+                        $pizza->crust_type = 'New Hand Tossed';
+                        break;
+                        case 'c1':
+                            $pizza->crust_type = 'New Hand Tossed';
+                            break;
+                        case 'c2':
+                            $pizza->crust_type = '100% Wheat Thin Crust';
+                            break;
+                        case 'c3':
+                            $pizza->crust_type = 'Cheese Burst';
+                            break;
+                        case 'c4':
+                            $pizza->crust_type = 'Fresh Pan Pizza';
+                            break;
+                        case 'c5':
+                            $pizza->crust_type = 'Classic Hand Tossed';
+                            break;
+                    default:
+                        $pizza->crust_type = 'Crust type not define';
+                        break;
+                }
+
+                $nestedData['crust_type'] = $pizza->crust_type;
+
                 // $nestedData['supplier'] = $supplier->name;
                 // if ($pizza->status == 1) {
                 //     $nestedData['purchase_status'] = '<div class="badge badge-success">' . trans('file.Recieved') . '</div>';
@@ -182,13 +260,6 @@ class PizzaController extends Controller
                         </li>';
                 }
 
-                $nestedData['options'] .=
-                '<li>
-                        <button type="button" class="add-payment btn btn-link" data-id = "' . $pizza->id . '" data-toggle="modal" data-target="#add-payment"><i class="fa fa-plus"></i> ' . trans('file.Add Payment') . '</button>
-                    </li>
-                    <li>
-                        <button type="button" class="get-payment btn btn-link" data-id = "' . $pizza->id . '"><i class="fa fa-money"></i> ' . trans('file.View Payment') . '</button>
-                    </li>';
                 if (in_array("pizzas-delete", $request['all_permission'])) {
                     $nestedData['options'] .= \Form::open(["route" => ["pizzas.destroy", $pizza->id], "method" => "DELETE"]) . '
                             <li>
@@ -197,12 +268,10 @@ class PizzaController extends Controller
                         </ul>
                     </div>';
                 }
-
                 // data for purchase details by one click
                 $user = User::find($pizza->user_id);
-
-                $nestedData['pizza'] = array('[ "' . date(config('date_format'), strtotime($pizza->created_at->toDateString())) . '"', ' "' . $pizza->reference_no . '"', ' "' . $pizza->id . '"', ' "' . $pizza->name . '"', ' "' . $pizza->size . '"', ' "' . $pizza->price . '"', ' "' . $pizza->crust_type . '"', ' "' . $pizza->image . '"', ' "' . $pizza->total_item . '"', ' "' . $pizza->note . '"', ' "' . $user->name . '"', ' "' . $user->email . '"]',
-                );
+                // $nestedData['pizza'] = array('[ "'.date(config('date_format'), strtotime($pizza->created_at->toDateString())).'"', ' "'.$purchase->reference_no.'"', ' "'.$purchase_status.'"',  ' "'.$purchase->id.'"', ' "'.$purchase->warehouse->name.'"', ' "'.$purchase->warehouse->phone.'"', ' "'.$purchase->warehouse->address.'"', ' "'.preg_replace('/\s+/S', " ", $purchase->note).'"', ' "'.$user->name.'"', ' "'.$user->email.'"]');
+                $nestedData['pizza'] = array('["'.date(config('date_format'), strtotime($pizza->created_at->toDateString())).'"', ' "'.$pizza->id.'"', ' "'.$pizza->note.'"', ' "'.$user->name.'"',' "'.$user->email.'"',' "'.$pizza->name.'"',' "'.$pizza->size.'"',' "'.$pizza->crust_type.'"',' " ₹'.$pizza->price.'"]');
                 $data[] = $nestedData;
             }
         }
@@ -356,35 +425,22 @@ class PizzaController extends Controller
         return redirect('pizzas')->with('message', 'pizza created successfully');
     }
 
-    public function productPurchaseData($id)
+    public function productPizzaData($id)
     {
-        $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
-        foreach ($lims_product_purchase_data as $key => $product_purchase_data) {
-            $product = Product::find($product_purchase_data->product_id);
-            $unit = Unit::find($product_purchase_data->purchase_unit_id);
-            if ($product_purchase_data->variant_id) {
-                $lims_product_variant_data = ProductVariant::FindExactProduct($product->id, $product_purchase_data->variant_id)->select('item_code')->first();
-                $product->code = $lims_product_variant_data->item_code;
-            }
-            if ($product_purchase_data->product_batch_id) {
-                $product_batch_data = ProductBatch::select('batch_no')->find($product_purchase_data->product_batch_id);
-                $product_purchase[7][$key] = $product_batch_data->batch_no;
-            } else {
-                $product_purchase[7][$key] = 'N/A';
-            }
+        $lims_product_pizza_data = ProductPizza::where('pizza_id', $id)->get();
 
-            $product_purchase[0][$key] = $product->name . ' [' . $product->code . ']';
-            if ($product_purchase_data->imei_number) {
-                $product_purchase[0][$key] .= '<br>IMEI or Serial Number: ' . $product_purchase_data->imei_number;
-            }
-            $product_purchase[1][$key] = $product_purchase_data->qty;
-            $product_purchase[2][$key] = $unit->unit_code;
-            $product_purchase[3][$key] = $product_purchase_data->tax;
-            $product_purchase[4][$key] = $product_purchase_data->tax_rate;
-            $product_purchase[5][$key] = $product_purchase_data->discount;
-            $product_purchase[6][$key] = $product_purchase_data->total;
+        foreach ($lims_product_pizza_data as $key => $product_pizza_data) {
+            
+            $product = Product::find($product_pizza_data->product_id);
+
+            $unit = Unit::find($product->sale_unit_id);
+
+            $product_pizza[0][$key] = $product->name;
+            $product_pizza[1][$key] = $product_pizza_data->qty;
+            $product_pizza[2][$key] = $unit->unit_name;
         }
-        return $product_purchase;
+
+        return $product_pizza;
     }
 
     public function purchaseByCsv()
@@ -540,16 +596,16 @@ class PizzaController extends Controller
     public function edit($id)
     {
         $role = Role::find(Auth::user()->role_id);
-        if ($role->hasPermissionTo('purchases-edit')) {
+        if ($role->hasPermissionTo('pizzas-edit')) {
             $lims_supplier_list = Supplier::where('is_active', true)->get();
             $lims_warehouse_list = Warehouse::where('is_active', true)->get();
             $lims_tax_list = Tax::where('is_active', true)->get();
             $lims_product_list_without_variant = $this->productWithoutVariant();
             $lims_product_list_with_variant = $this->productWithVariant();
-            $lims_purchase_data = Purchase::find($id);
-            $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
+            $lims_pizza_data = Pizza::find($id);
+            $lims_product_pizza_data = ProductPizza::where('pizza_id', $id)->get();
 
-            return view('purchase.edit', compact('lims_warehouse_list', 'lims_supplier_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant', 'lims_tax_list', 'lims_purchase_data', 'lims_product_purchase_data'));
+            return view('pizza.edit', compact('lims_warehouse_list', 'lims_supplier_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant', 'lims_tax_list', 'lims_pizza_data', 'lims_product_pizza_data'));
         } else {
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
         }
@@ -558,210 +614,50 @@ class PizzaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $data = $request->except('document');
-        $document = $request->document;
-        if ($document) {
-            $v = Validator::make(
-                [
-                    'extension' => strtolower($request->document->getClientOriginalExtension()),
-                ],
-                [
-                    'extension' => 'in:jpg,jpeg,png,gif,pdf,csv,docx,xlsx,txt',
-                ]
-            );
-            if ($v->fails()) {
-                return redirect()->back()->withErrors($v->errors());
-            }
-
-            $documentName = $document->getClientOriginalName();
-            $document->move('public/purchase/documents', $documentName);
-            $data['document'] = $documentName;
-        }
-        //return dd($data);
-        $balance = $data['grand_total'] - $data['paid_amount'];
-        if ($balance < 0 || $balance > 0) {
-            $data['payment_status'] = 1;
+        $validator = $request->validate([
+            'name' => 'required',
+            'size' => 'required',
+            'price' => 'required',
+            'crust_type' => 'required',
+        ]);
+        // dd($request)->toArray();
+        if (!empty($request->file('img'))) {
+            $image = $request->file('img');
+            $imageName = time() . '.' . $image->extension();
+            $image->move(public_path('images/pizza'), $imageName);
         } else {
-            $data['payment_status'] = 2;
-        }
-        $lims_purchase_data = Purchase::find($id);
-
-        $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
-
-        $product_id = $data['product_id'];
-        $product_code = $data['product_code'];
-        $qty = $data['qty'];
-        $recieved = $data['recieved'];
-        $batch_no = $data['batch_no'];
-        $expired_date = $data['expired_date'];
-        $pizza_unit = $data['purchase_unit'];
-        $net_unit_cost = $data['net_unit_cost'];
-        $discount = $data['discount'];
-        $tax_rate = $data['tax_rate'];
-        $tax = $data['tax'];
-        $total = $data['subtotal'];
-        $imei_number = $new_imei_number = $data['imei_number'];
-        $product_purchase = [];
-
-        foreach ($lims_product_purchase_data as $product_purchase_data) {
-
-            $old_recieved_value = $product_purchase_data->recieved;
-            $lims_purchase_unit_data = Unit::find($product_purchase_data->purchase_unit_id);
-
-            if ($lims_purchase_unit_data->operator == '*') {
-                $old_recieved_value = $old_recieved_value * $lims_purchase_unit_data->operation_value;
-            } else {
-                $old_recieved_value = $old_recieved_value / $lims_purchase_unit_data->operation_value;
-            }
-            $lims_product_data = Product::find($product_purchase_data->product_id);
-            if ($lims_product_data->is_variant) {
-                $lims_product_variant_data = ProductVariant::select('id', 'variant_id', 'qty')->FindExactProduct($lims_product_data->id, $product_purchase_data->variant_id)->first();
-                $lims_product_warehouse_data = Product_Warehouse::where([
-                    ['product_id', $lims_product_data->id],
-                    ['variant_id', $product_purchase_data->variant_id],
-                    ['warehouse_id', $lims_purchase_data->warehouse_id],
-                ])->first();
-                $lims_product_variant_data->qty -= $old_recieved_value;
-                $lims_product_variant_data->save();
-            } elseif ($product_purchase_data->product_batch_id) {
-                $product_batch_data = ProductBatch::find($product_purchase_data->product_batch_id);
-                $product_batch_data->qty -= $old_recieved_value;
-                $product_batch_data->save();
-
-                $lims_product_warehouse_data = Product_Warehouse::where([
-                    ['product_id', $product_purchase_data->product_id],
-                    ['product_batch_id', $product_purchase_data->product_batch_id],
-                    ['warehouse_id', $lims_purchase_data->warehouse_id],
-                ])->first();
-            } else {
-                $lims_product_warehouse_data = Product_Warehouse::where([
-                    ['product_id', $product_purchase_data->product_id],
-                    ['warehouse_id', $lims_purchase_data->warehouse_id],
-                ])->first();
-            }
-            if ($product_purchase_data->imei_number) {
-                $position = array_search($lims_product_data->id, $product_id);
-                if ($imei_number[$position]) {
-                    $prev_imei_numbers = explode(",", $product_purchase_data->imei_number);
-                    $new_imei_numbers = explode(",", $imei_number[$position]);
-                    foreach ($prev_imei_numbers as $prev_imei_number) {
-                        if (($pos = array_search($prev_imei_number, $new_imei_numbers)) !== false) {
-                            unset($new_imei_numbers[$pos]);
-                        }
-                    }
-                    $new_imei_number[$position] = implode(",", $new_imei_numbers);
-                }
-            }
-            $lims_product_data->qty -= $old_recieved_value;
-            $lims_product_warehouse_data->qty -= $old_recieved_value;
-            $lims_product_warehouse_data->save();
-            $lims_product_data->save();
-            $product_purchase_data->delete();
+            $imageName = 'pizza_image1.png';
         }
 
-        foreach ($product_id as $key => $pro_id) {
+        // $id = $request->id;
+        $item_count = count($request->product_id);
+        
+    
+        $pizza = Pizza::find($id);
+        $pizza->name = $request->name;
+        $pizza->size = $request->size;
+        $pizza->price = $request->price;
+        $pizza->crust_type = $request->crust_type;
+        $pizza->image = $imageName;
+        $pizza->total_item = $item_count;
+        $pizza->user_id = Auth::id();
+        $pizza->note = $request->note;
+        $pizza->save();
+        
+        $lims_product_pizza_data = ProductPizza::where('pizza_id', $id)->get();
 
-            $lims_purchase_unit_data = Unit::where('unit_name', $pizza_unit[$key])->first();
-            if ($lims_purchase_unit_data->operator == '*') {
-                $new_recieved_value = $recieved[$key] * $lims_purchase_unit_data->operation_value;
-            } else {
-                $new_recieved_value = $recieved[$key] / $lims_purchase_unit_data->operation_value;
-            }
-
-            $lims_product_data = Product::find($pro_id);
-            //dealing with product barch
-            if ($batch_no[$key]) {
-                $product_batch_data = ProductBatch::where([
-                    ['product_id', $lims_product_data->id],
-                    ['batch_no', $batch_no[$key]],
-                ])->first();
-                if ($product_batch_data) {
-                    $product_batch_data->qty += $new_recieved_value;
-                    $product_batch_data->expired_date = $expired_date[$key];
-                    $product_batch_data->save();
-                } else {
-                    $product_batch_data = ProductBatch::create([
-                        'product_id' => $lims_product_data->id,
-                        'batch_no' => $batch_no[$key],
-                        'expired_date' => $expired_date[$key],
-                        'qty' => $new_recieved_value,
-                    ]);
-                }
-                $product_purchase['product_batch_id'] = $product_batch_data->id;
-            } else {
-                $product_purchase['product_batch_id'] = null;
-            }
-
-            if ($lims_product_data->is_variant) {
-                $lims_product_variant_data = ProductVariant::select('id', 'variant_id', 'qty')->FindExactProductWithCode($pro_id, $product_code[$key])->first();
-                $lims_product_warehouse_data = Product_Warehouse::where([
-                    ['product_id', $pro_id],
-                    ['variant_id', $lims_product_variant_data->variant_id],
-                    ['warehouse_id', $data['warehouse_id']],
-                ])->first();
-                $product_purchase['variant_id'] = $lims_product_variant_data->variant_id;
-                //add quantity to product variant table
-                $lims_product_variant_data->qty += $new_recieved_value;
-                $lims_product_variant_data->save();
-            } else {
-                $product_purchase['variant_id'] = null;
-                if ($product_purchase['product_batch_id']) {
-                    $lims_product_warehouse_data = Product_Warehouse::where([
-                        ['product_id', $pro_id],
-                        ['product_batch_id', $product_purchase['product_batch_id']],
-                        ['warehouse_id', $data['warehouse_id']],
-                    ])->first();
-                } else {
-                    $lims_product_warehouse_data = Product_Warehouse::where([
-                        ['product_id', $pro_id],
-                        ['warehouse_id', $data['warehouse_id']],
-                    ])->first();
-                }
-            }
-
-            $lims_product_data->qty += $new_recieved_value;
-            if ($lims_product_warehouse_data) {
-                $lims_product_warehouse_data->qty += $new_recieved_value;
-                $lims_product_warehouse_data->save();
-            } else {
-                $lims_product_warehouse_data = new Product_Warehouse();
-                $lims_product_warehouse_data->product_id = $pro_id;
-                $lims_product_warehouse_data->product_batch_id = $product_purchase['product_batch_id'];
-                if ($lims_product_data->is_variant) {
-                    $lims_product_warehouse_data->variant_id = $lims_product_variant_data->variant_id;
-                }
-
-                $lims_product_warehouse_data->warehouse_id = $data['warehouse_id'];
-                $lims_product_warehouse_data->qty = $new_recieved_value;
-            }
-            //dealing with imei numbers
-            if ($imei_number[$key]) {
-                if ($lims_product_warehouse_data->imei_number) {
-                    $lims_product_warehouse_data->imei_number .= ',' . $new_imei_number[$key];
-                } else {
-                    $lims_product_warehouse_data->imei_number = $new_imei_number[$key];
-                }
-            }
-
-            $lims_product_data->save();
-            $lims_product_warehouse_data->save();
-
-            $product_purchase['purchase_id'] = $id;
-            $product_purchase['product_id'] = $pro_id;
-            $product_purchase['qty'] = $qty[$key];
-            $product_purchase['recieved'] = $recieved[$key];
-            $product_purchase['purchase_unit_id'] = $lims_purchase_unit_data->id;
-            $product_purchase['net_unit_cost'] = $net_unit_cost[$key];
-            $product_purchase['discount'] = $discount[$key];
-            $product_purchase['tax_rate'] = $tax_rate[$key];
-            $product_purchase['tax'] = $tax[$key];
-            $product_purchase['total'] = $total[$key];
-            $product_purchase['imei_number'] = $imei_number[$key];
-            ProductPurchase::create($product_purchase);
+        if(!is_null($lims_product_pizza_data)){
+            $lims_product_pizza_data->each->delete();
         }
-
-        $lims_purchase_data->update($data);
-        return redirect('purchases')->with('message', 'Purchase updated successfully');
+        
+        for ($i=0; $i < $item_count; $i++) {
+            $product_pizza = new ProductPizza;
+            $product_pizza->pizza_id = $id;
+            $product_pizza->product_id = $request->product_id[$i];
+            $product_pizza->qty = $request->qty[$i];
+            $product_pizza->save();
+        }
+        return redirect('pizzas')->with('message', 'pizza updated successfully');
     }
 
     public function addPayment(Request $request)
@@ -978,142 +874,39 @@ class PizzaController extends Controller
 
     public function deleteBySelection(Request $request)
     {
-        $pizza_id = $request['purchaseIdArray'];
-        foreach ($pizza_id as $id) {
-            $lims_purchase_data = Purchase::find($id);
-            $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
-            $lims_payment_data = Payment::where('purchase_id', $id)->get();
-            foreach ($lims_product_purchase_data as $product_purchase_data) {
-                $lims_purchase_unit_data = Unit::find($product_purchase_data->purchase_unit_id);
-                if ($lims_purchase_unit_data->operator == '*') {
-                    $recieved_qty = $product_purchase_data->recieved * $lims_purchase_unit_data->operation_value;
-                } else {
-                    $recieved_qty = $product_purchase_data->recieved / $lims_purchase_unit_data->operation_value;
-                }
-
-                $lims_product_data = Product::find($product_purchase_data->product_id);
-                if ($product_purchase_data->variant_id) {
-                    $lims_product_variant_data = ProductVariant::select('id', 'qty')->FindExactProduct($lims_product_data->id, $product_purchase_data->variant_id)->first();
-                    $lims_product_warehouse_data = Product_Warehouse::FindProductWithVariant($product_purchase_data->product_id, $product_purchase_data->variant_id, $lims_purchase_data->warehouse_id)
-                        ->first();
-                    $lims_product_variant_data->qty -= $recieved_qty;
-                    $lims_product_variant_data->save();
-                } elseif ($product_purchase_data->product_batch_id) {
-                    $lims_product_batch_data = ProductBatch::find($product_purchase_data->product_batch_id);
-                    $lims_product_warehouse_data = Product_Warehouse::where([
-                        ['product_batch_id', $product_purchase_data->product_batch_id],
-                        ['warehouse_id', $lims_purchase_data->warehouse_id],
-                    ])->first();
-
-                    $lims_product_batch_data->qty -= $recieved_qty;
-                    $lims_product_batch_data->save();
-                } else {
-                    $lims_product_warehouse_data = Product_Warehouse::FindProductWithoutVariant($product_purchase_data->product_id, $lims_purchase_data->warehouse_id)
-                        ->first();
-                }
-
-                $lims_product_data->qty -= $recieved_qty;
-                $lims_product_warehouse_data->qty -= $recieved_qty;
-
-                $lims_product_warehouse_data->save();
-                $lims_product_data->save();
-                $product_purchase_data->delete();
+        $pizza_id = $request['pizzaIdArray'];
+        if(!is_null($pizza_id)){
+            foreach ($pizza_id as $id) {
+                $lims_pizza_data = Pizza::find($id);
+                $lims_product_pizza_data = ProductPizza::where('pizza_id', $id)->get();
+                
+                $lims_pizza_data->delete();
+                $lims_product_pizza_data->each->delete();
             }
-            foreach ($lims_payment_data as $payment_data) {
-                if ($payment_data->paying_method == "Cheque") {
-                    $payment_with_cheque_data = PaymentWithCheque::where('payment_id', $payment_data->id)->first();
-                    $payment_with_cheque_data->delete();
-                } elseif ($payment_data->paying_method == "Credit Card") {
-                    $payment_with_credit_card_data = PaymentWithCreditCard::where('payment_id', $payment_data->id)->first();
-                    $lims_pos_setting_data = PosSetting::latest()->first();
-                    \Stripe\Stripe::setApiKey($lims_pos_setting_data->stripe_secret_key);
-                    \Stripe\Refund::create(array(
-                        "charge" => $payment_with_credit_card_data->charge_id,
-                    ));
-
-                    $payment_with_credit_card_data->delete();
-                }
-                $payment_data->delete();
-            }
-
-            $lims_purchase_data->delete();
+            return "Deleted Successully";
         }
-        return 'Purchase deleted successfully!';
+        else{
+            return "somthing is wrong plaese try again";
+
+        }
     }
 
     public function destroy($id)
     {
         $role = Role::find(Auth::user()->role_id);
-        if ($role->hasPermissionTo('purchases-delete')) {
-            $lims_purchase_data = Purchase::find($id);
-            $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
-            $lims_payment_data = Payment::where('purchase_id', $id)->get();
-            foreach ($lims_product_purchase_data as $product_purchase_data) {
-                $lims_purchase_unit_data = Unit::find($product_purchase_data->purchase_unit_id);
-                if ($lims_purchase_unit_data->operator == '*') {
-                    $recieved_qty = $product_purchase_data->recieved * $lims_purchase_unit_data->operation_value;
-                } else {
-                    $recieved_qty = $product_purchase_data->recieved / $lims_purchase_unit_data->operation_value;
-                }
+        if ($role->hasPermissionTo('pizzas-delete')) {
+            $lims_pizza_data = Pizza::find($id);
+            $lims_product_pizza_data = ProductPizza::where('pizza_id', $id)->get();
 
-                $lims_product_data = Product::find($product_purchase_data->product_id);
-                if ($product_purchase_data->variant_id) {
-                    $lims_product_variant_data = ProductVariant::select('id', 'qty')->FindExactProduct($lims_product_data->id, $product_purchase_data->variant_id)->first();
-                    $lims_product_warehouse_data = Product_Warehouse::FindProductWithVariant($product_purchase_data->product_id, $product_purchase_data->variant_id, $lims_purchase_data->warehouse_id)
-                        ->first();
-                    $lims_product_variant_data->qty -= $recieved_qty;
-                    $lims_product_variant_data->save();
-                } elseif ($product_purchase_data->product_batch_id) {
-                    $lims_product_batch_data = ProductBatch::find($product_purchase_data->product_batch_id);
-                    $lims_product_warehouse_data = Product_Warehouse::where([
-                        ['product_batch_id', $product_purchase_data->product_batch_id],
-                        ['warehouse_id', $lims_purchase_data->warehouse_id],
-                    ])->first();
-
-                    $lims_product_batch_data->qty -= $recieved_qty;
-                    $lims_product_batch_data->save();
-                } else {
-                    $lims_product_warehouse_data = Product_Warehouse::FindProductWithoutVariant($product_purchase_data->product_id, $lims_purchase_data->warehouse_id)
-                        ->first();
-                }
-                //deduct imei number if available
-                if ($product_purchase_data->imei_number) {
-                    $imei_numbers = explode(",", $product_purchase_data->imei_number);
-                    $all_imei_numbers = explode(",", $lims_product_warehouse_data->imei_number);
-                    foreach ($imei_numbers as $number) {
-                        if (($j = array_search($number, $all_imei_numbers)) !== false) {
-                            unset($all_imei_numbers[$j]);
-                        }
-                    }
-                    $lims_product_warehouse_data->imei_number = implode(",", $all_imei_numbers);
-                }
-
-                $lims_product_data->qty -= $recieved_qty;
-                $lims_product_warehouse_data->qty -= $recieved_qty;
-
-                $lims_product_warehouse_data->save();
-                $lims_product_data->save();
-                $product_purchase_data->delete();
+            if(!is_null($lims_pizza_data)){
+                $lims_pizza_data->delete();
+                $lims_product_pizza_data->each->delete();
+                return redirect('pizzas')->with('not_permitted', 'pizza deleted successfully');
             }
-            foreach ($lims_payment_data as $payment_data) {
-                if ($payment_data->paying_method == "Cheque") {
-                    $payment_with_cheque_data = PaymentWithCheque::where('payment_id', $payment_data->id)->first();
-                    $payment_with_cheque_data->delete();
-                } elseif ($payment_data->paying_method == "Credit Card") {
-                    $payment_with_credit_card_data = PaymentWithCreditCard::where('payment_id', $payment_data->id)->first();
-                    $lims_pos_setting_data = PosSetting::latest()->first();
-                    \Stripe\Stripe::setApiKey($lims_pos_setting_data->stripe_secret_key);
-                    \Stripe\Refund::create(array(
-                        "charge" => $payment_with_credit_card_data->charge_id,
-                    ));
-
-                    $payment_with_credit_card_data->delete();
-                }
-                $payment_data->delete();
+            else{
+                return redirect('pizzas')->with('not_permitted', 'something is wrong plaese try again');
             }
 
-            $lims_purchase_data->delete();
-            return redirect('purchases')->with('not_permitted', 'Purchase deleted successfully');
         }
 
     }

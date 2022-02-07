@@ -26,23 +26,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 mt-3 @if(\Auth::user()->role_id > 2){{'d-none'}}@endif">
-                    <div class="form-group row">
-                        <label class="d-tc mt-2"><strong>{{trans('file.Choose Warehouse')}}</strong> &nbsp;</label>
-                        <div class="d-tc">
-                            <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" >
-                                <option value="0">{{trans('file.All Warehouse')}}</option>
-                                @foreach($lims_warehouse_list as $warehouse)
-                                    @if($warehouse->id == $warehouse_id)
-                                        <option selected value="{{$warehouse->id}}">{{$warehouse->name}}</option>
-                                    @else
-                                        <option value="{{$warehouse->id}}">{{$warehouse->name}}</option>
-                                    @endif
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
+                <input type="hidden" id="warehouse_id" name="warehouse_id" value="1">
                 <div class="col-md-2 mt-3">
                     <div class="form-group">
                         <button class="btn btn-primary" id="filter-btn" type="submit">{{trans('file.submit')}}</button>
@@ -52,8 +36,8 @@
             {!! Form::close() !!}
         </div>
         @if(in_array("pizzas-add", $all_permission))
-            <a href="{{route('pizzas.create')}}" class="btn btn-info"><i class="dripicons-plus"></i> {{trans('file.Add pizza')}}</a>&nbsp;
-            <a href="{{url('pizzas/pizza_by_csv')}}" class="btn btn-primary"><i class="dripicons-copy"></i> {{trans('file.Import pizza')}}</a>
+            <a href="{{route('pizzas.create')}}" class="btn btn-info"><i class="dripicons-plus"></i> Add Pizza</a>&nbsp;
+            <a href="{{url('pizzas/pizza_by_csv')}}" class="btn btn-primary"><i class="dripicons-copy"></i> Import Pizza</a>
         @endif
     </div>
     <div class="table-responsive">
@@ -61,16 +45,19 @@
             <thead>
                 <tr>
                     <th class="not-exported"></th>
+                    <th>Date</th>
                     <th>Image</th>
                     <th>Name</th>
-                    <th>Pizza Size</th>
+                    <th>Size</th>
                     <th>Crust Type</th>
                     <th>Price</th>
-                    <th>No. of Ingredients</th>
-                    <th>Date & Time</th>
+                    <th>No of items</th>
+                    <th>Note</th>
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
             </thead>
+
+            
         </table>
     </div>
 </section>
@@ -90,7 +77,7 @@
                     <h3 id="exampleModalLabel" class="modal-title text-center container-fluid">{{$general_setting->site_title}}</h3>
                 </div>
                 <div class="col-md-12 text-center">
-                    <i style="font-size: 15px;">{{trans('file.pizza Details')}}</i>
+                    <i style="font-size: 15px;">Pizza Details</i>
                 </div>
             </div>
         </div>
@@ -99,13 +86,8 @@
             <table class="table table-bordered product-pizza-list">
                 <thead>
                     <th>#</th>
-                    <th>{{trans('file.product')}}</th>
-                    <th>{{trans('file.Batch No')}}</th>
+                    <th>Name</th>
                     <th>Qty</th>
-                    <th>{{trans('file.Unit Cost')}}</th>
-                    <th>{{trans('file.Tax')}}</th>
-                    <th>{{trans('file.Discount')}}</th>
-                    <th>{{trans('file.Subtotal')}}</th>
                 </thead>
                 <tbody>
                 </tbody>
@@ -159,13 +141,7 @@
         return false;
     }
 
-    function confirmDeletePayment() {
-        if (confirm("Are you sure want to delete? If you delete this money will be refunded")) {
-            return true;
-        }
-        return false;
-    }
-
+   
     $(document).on("click", "tr.pizza-link td:not(:first-child, :last-child)", function(){
         var pizza = $(this).parent().data('pizza');
         pizzaDetails(pizza);
@@ -203,15 +179,150 @@
         $('input[name="pizza_id"]').val(pizza_id);
     });
 
+    $(document).on("click", "table.pizza-list tbody .get-payment", function(event) {
+        var id = $(this).data('id').toString();
+        $.get('pizzas/getpayment/' + id, function(data) {
+            $(".payment-list tbody").remove();
+            var newBody = $("<tbody>");
+            payment_date  = data[0];
+            payment_reference = data[1];
+            paid_amount = data[2];
+            paying_method = data[3];
+            payment_id = data[4];
+            payment_note = data[5];
+            cheque_no = data[6];
+            change = data[7];
+            paying_amount = data[8];
+            account_name = data[9];
+            account_id = data[10];
 
-   
+            $.each(payment_date, function(index){
+                var newRow = $("<tr>");
+                var cols = '';
+
+                cols += '<td>' + payment_date[index] + '</td>';
+                cols += '<td>' + payment_reference[index] + '</td>';
+                cols += '<td>' + account_name[index] + '</td>';
+                cols += '<td>' + paid_amount[index] + '</td>';
+                cols += '<td>' + paying_method[index] + '</td>';
+                cols += '<td><div class="btn-group"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button><ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu"><li><button type="button" class="btn btn-link edit-btn" data-id="' + payment_id[index] +'" data-clicked=false data-toggle="modal" data-target="#edit-payment"><i class="dripicons-document-edit"></i>Edit</button></li><li class="divider"></li><li><input type="hidden" name="id" value="' + payment_id[index] + '" /> <button type="submit" class="btn btn-link" onclick="return confirmDeletePayment()"><i class="dripicons-trash"></i> Delete</button></li></ul></div></td>'
+                newRow.append(cols);
+                newBody.append(newRow);
+                $("table.payment-list").append(newBody);
+            });
+            $('#view-payment').modal('show');
+        });
+    });
+
+    $(document).on("click", "table.payment-list .edit-btn", function(event) {
+        $(".edit-btn").attr('data-clicked', true);
+        $(".card-element").hide();
+        $("#edit-cheque").hide();
+        $('#edit-payment select[name="edit_paid_by_id"]').prop('disabled', false);
+        var id = $(this).data('id').toString();
+        $.each(payment_id, function(index){
+            if(payment_id[index] == parseFloat(id)){
+                $('input[name="payment_id"]').val(payment_id[index]);
+                $('#edit-payment select[name="account_id"]').val(account_id[index]);
+                if(paying_method[index] == 'Cash')
+                    $('select[name="edit_paid_by_id"]').val(1);
+                else if(paying_method[index] == 'Credit Card'){
+                    $('select[name="edit_paid_by_id"]').val(3);
+                    $.getScript( "public/vendor/stripe/checkout.js" );
+                    $(".card-element").show();
+                    $("#edit-cheque").hide();
+                    $('#edit-payment select[name="edit_paid_by_id"]').prop('disabled', true);
+                }
+                else{
+                    $('select[name="edit_paid_by_id"]').val(4);
+                    $("#edit-cheque").show();
+                    $('input[name="edit_cheque_no"]').val(cheque_no[index]);
+                    $('input[name="edit_cheque_no"]').attr('required', true);
+                }
+                $('input[name="edit_date"]').val(payment_date[index]);
+                $("#payment_reference").html(payment_reference[index]);
+                $('input[name="edit_amount"]').val(paid_amount[index]);
+                $('input[name="edit_paying_amount"]').val(paying_amount[index]);
+                $('.change').text(change[index]);
+                $('textarea[name="edit_payment_note"]').val(payment_note[index]);
+                return false;
+            }
+        });
+        $('.selectpicker').selectpicker('refresh');
+        $('#view-payment').modal('hide');
+    });
+
+    $('select[name="paid_by_id"]').on("change", function() {
+        var id = $('select[name="paid_by_id"]').val();
+        $('input[name="cheque_no"]').attr('required', false);
+        $(".payment-form").off("submit");
+        if (id == 3) {
+            $.getScript( "public/vendor/stripe/checkout.js" );
+            $(".card-element").show();
+            $("#cheque").hide();
+        } else if (id == 4) {
+            $("#cheque").show();
+            $(".card-element").hide();
+            $('input[name="cheque_no"]').attr('required', true);
+        } else {
+            $(".card-element").hide();
+            $("#cheque").hide();
+        }
+    });
+
+    $('input[name="paying_amount"]').on("input", function() {
+        $(".change").text(parseFloat( $(this).val() - $('input[name="amount"]').val() ).toFixed(2));
+    });
+
+    $('input[name="amount"]').on("input", function() {
+        if( $(this).val() > parseFloat($('input[name="paying_amount"]').val()) ) {
+            alert('Paying amount cannot be bigger than recieved amount');
+            $(this).val('');
+        }
+        else if( $(this).val() > parseFloat($('input[name="balance"]').val()) ) {
+            alert('Paying amount cannot be bigger than due amount');
+            $(this).val('');
+        }
+        $(".change").text(parseFloat($('input[name="paying_amount"]').val() - $(this).val()).toFixed(2));
+    });
+
+    $('select[name="edit_paid_by_id"]').on("change", function() {
+        var id = $('select[name="edit_paid_by_id"]').val();
+        $('input[name="edit_cheque_no"]').attr('required', false);
+        $(".payment-form").off("submit");
+        if (id == 3) {
+            $(".edit-btn").attr('data-clicked', true);
+            $.getScript( "public/vendor/stripe/checkout.js" );
+            $(".card-element").show();
+            $("#edit-cheque").hide();
+        } else if (id == 4) {
+            $("#edit-cheque").show();
+            $(".card-element").hide();
+            $('input[name="edit_cheque_no"]').attr('required', true);
+        } else {
+            $(".card-element").hide();
+            $("#edit-cheque").hide();
+        }
+    });
+
+    $('input[name="edit_amount"]').on("input", function() {
+        if( $(this).val() > parseFloat($('input[name="edit_paying_amount"]').val()) ) {
+            alert('Paying amount cannot be bigger than recieved amount');
+            $(this).val('');
+        }
+        $(".change").text(parseFloat($('input[name="edit_paying_amount"]').val() - $(this).val()).toFixed(2));
+    });
+
+    $('input[name="edit_paying_amount"]').on("input", function() {
+        $(".change").text(parseFloat( $(this).val() - $('input[name="edit_amount"]').val() ).toFixed(2));
+    });
 
     dataTable();
 
     function dataTable() {
         var starting_date = $("input[name=starting_date]").val();
         var ending_date = $("input[name=ending_date]").val();
-        // var warehouse_id = $("#warehouse_id").val();
+        var warehouse_id = $("#warehouse_id").val();
         $('#pizza-table').DataTable( {
             "processing": true,
             "serverSide": true,
@@ -220,8 +331,8 @@
                 data:{
                     all_permission: all_permission,
                     starting_date: starting_date,
-                    ending_date: ending_date
-                    // warehouse_id: warehouse_id
+                    ending_date: ending_date,
+                    warehouse_id: warehouse_id
                 },
                 dataType: "json",
                 type:"post",
@@ -235,13 +346,14 @@
             },
             "columns": [
                 {"data": "key"},
+                {"data": "date"},
                 {"data": "image"},
                 {"data": "name"},
                 {"data": "size"},
                 {"data": "crust_type"},
                 {"data": "price"},
                 {"data": "total_item"},
-                {"data": "created_at"},
+                {"data": "note"},
                 {"data": "options"},
             ],
             'language': {
@@ -258,7 +370,7 @@
             'columnDefs': [
                 {
                     "orderable": false,
-                    'targets': [0, 3, 4, 7, 8,9]
+                    'targets': [0,8,9]
                 },
                 {
                     'render': function(data, type, row, meta){
@@ -330,7 +442,7 @@
                             $(':checkbox:checked').each(function(i){
                                 if(i){
                                     var pizza = $(this).closest('tr').data('pizza');
-                                    pizza_id[i-1] = pizza[3];
+                                    pizza_id[i-1] = pizza[1];
                                 }
                             });
                             if(pizza_id.length && confirm("Are you sure want to delete?")) {
@@ -384,89 +496,41 @@
     }
 
     function pizzaDetails(pizza){
-        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+pizza[0]+'<br><strong>{{trans("file.reference")}}: </strong>'+pizza[1]+'<br><strong>{{trans("file.pizza Status")}}: </strong>'+pizza[2]+'<br><br><div class="row"><div class="col-md-6"><strong>{{trans("file.From")}}:</strong><br>'+pizza[4]+'<br>'+pizza[5]+'<br>'+pizza[6]+'</div><div class="col-md-6"><div class="float-right"><strong>{{trans("file.To")}}:</strong><br>'+pizza[7]+'<br>'+pizza[8]+'<br>'+pizza[9]+'<br>'+pizza[10]+'<br>'+pizza[11]+'<br>'+pizza[12]+'</div></div></div>';
+        
+        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+pizza[0]+'<br><br><strong>Name: </strong>'+pizza[5]+'<br><strong>Size: </strong>'+pizza[6]+'<br><strong>Crust Type: </strong>'+pizza[7]+'<br><strong>Price: </strong>'+pizza[8];
 
-        $.get('pizzas/product_pizza/' + pizza[3], function(data){
+        $.get('pizzas/product_pizza/' + pizza[1], function(data){
             $(".product-pizza-list tbody").remove();
-            var name_code = data[0];
+            var product_id = data[0];
             var qty = data[1];
-            var unit_code = data[2];
-            var tax = data[3];
-            var tax_rate = data[4];
-            var discount = data[5];
-            var subtotal = data[6];
-            var batch_no = data[7];
+            var unit_name = data[2];
+            // var unit_code = data[2];
+            // var tax = data[3];
+            // var tax_rate = data[4];
+            // var discount = data[5];
+            // var subtotal = data[6];
+            // var batch_no = data[7];
             var newBody = $("<tbody>");
-            $.each(name_code, function(index) {
+            $.each(product_id, function(index) {
                 var newRow = $("<tr>");
                 var cols = '';
                 cols += '<td><strong>' + (index+1) + '</strong></td>';
-                cols += '<td>' + name_code[index] + '</td>';
-                cols += '<td>' + batch_no[index] + '</td>';
-                cols += '<td>' + qty[index] + ' ' + unit_code[index] + '</td>';
-                cols += '<td>' + (subtotal[index] / qty[index]) + '</td>';
-                cols += '<td>' + tax[index] + '(' + tax_rate[index] + '%)' + '</td>';
-                cols += '<td>' + discount[index] + '</td>';
-                cols += '<td>' + subtotal[index] + '</td>';
+                cols += '<td>' + product_id[index] + '</td>';
+                cols += '<td>' + qty[index] + ' ' + unit_name[index] + '</td>';
+                // cols += '<td>' + qty[index] + ' ' + unit_code[index] + '</td>';
+                // cols += '<td>' + (subtotal[index] / qty[index]) + '</td>';
+                // cols += '<td>' + tax[index] + '(' + tax_rate[index] + '%)' + '</td>';
+                // cols += '<td>' + discount[index] + '</td>';
+                // cols += '<td>' + subtotal[index] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
             });
 
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=5><strong>{{trans("file.Total")}}:</strong></td>';
-            cols += '<td>' + pizza[13] + '</td>';
-            cols += '<td>' + pizza[14] + '</td>';
-            cols += '<td>' + pizza[15] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Order Tax")}}:</strong></td>';
-            cols += '<td>' + pizza[16] + '(' + pizza[17] + '%)' + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Order Discount")}}:</strong></td>';
-            cols += '<td>' + pizza[18] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Shipping Cost")}}:</strong></td>';
-            cols += '<td>' + pizza[19] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.grand total")}}:</strong></td>';
-            cols += '<td>' + pizza[20] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Paid Amount")}}:</strong></td>';
-            cols += '<td>' + pizza[21] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Due")}}:</strong></td>';
-            cols += '<td>' + (pizza[20] - pizza[21]) + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
+            
              $("table.product-pizza-list").append(newBody);
         });
 
-        var htmlfooter = '<p><strong>{{trans("file.Note")}}:</strong> '+pizza[22]+'</p><strong>{{trans("file.Created By")}}:</strong><br>'+pizza[23]+'<br>'+pizza[24];
+        var htmlfooter = '<p><strong>{{trans("file.Note")}}:</strong> '+pizza[2]+'</p><strong>{{trans("file.Created By")}}:</strong><br>'+pizza[3]+'<br>'+pizza[4];
 
         $('#pizza-content').html(htmltext);
         $('#pizza-footer').html(htmlfooter);

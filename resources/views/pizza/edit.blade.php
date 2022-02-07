@@ -8,60 +8,48 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <h4>{{trans('file.Update Purchase')}}</h4>
+                        <h4>Edit Pizza</h4>
                     </div>
                     <div class="card-body">
                         <p class="italic"><small>{{trans('file.The field labels marked with * are required input fields')}}.</small></p>
-                        {!! Form::open(['route' => ['purchases.update', $lims_purchase_data->id], 'method' => 'put', 'files' => true, 'id' => 'purchase-form']) !!}
+                        {!! Form::open(['route' => ['pizzas.update', $lims_pizza_data->id], 'method' => 'put', 'files' => true, 'id' => 'pizza-form']) !!}
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{trans('file.Reference No')}}</label>
-                                            <p><strong>{{ $lims_purchase_data->reference_no }}</strong> </p>
+                                            <label>Pizza Name</label>
+                                            <input type="text" name="name" class="form-control" value="{{$lims_pizza_data->name}}">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{trans('file.Warehouse')}} *</label>
-                                            <input type="hidden" name="warehouse_id_hidden" value="{{$lims_purchase_data->warehouse_id}}" />
-                                            <select required name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select warehouse...">
-                                                @foreach($lims_warehouse_list as $warehouse)
-                                                <option value="{{$warehouse->id}}">{{$warehouse->name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>{{trans('file.Supplier')}}</label>
-                                            <input type="hidden" name="supplier_id_hidden" value="{{ $lims_purchase_data->supplier_id }}" />
-                                            <select name="supplier_id" class="selectpicker form-control" data-live-search="true" id="supplier-id" data-live-search-style="begins" title="Select supplier...">
-                                                @foreach($lims_supplier_list as $supplier)
-                                                <option value="{{$supplier->id}}">{{$supplier->name .' ('. $supplier->company_name .')'}}</option>
-                                                @endforeach
+                                            <label>Pizza Size *</label>
+                                            <select required name="size" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select pizza size...">
+                                                <option value="s" {{$lims_pizza_data->size == 's' ? 'selected' : ''}}>Regular</option>
+                                                <option value="m" {{$lims_pizza_data->size == 'm' ? 'selected' : ''}}>Medium</option>
+                                                <option value="l" {{$lims_pizza_data->size == 'l' ? 'selected' : ''}}>Large</option>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                	<div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{trans('file.Purchase Status')}}</label>
-                                            <input type="hidden" name="status_hidden" value="{{$lims_purchase_data->status}}">
-                                            <select name="status" class="form-control">
-                                                <option value="1">{{trans('file.Recieved')}}</option>
-                                                <option value="2">{{trans('file.Partial')}}</option>
-                                                <option value="3">{{trans('file.Pending')}}</option>
-                                                <option value="4">{{trans('file.Ordered')}}</option>
+                                            <label>Pizza Crust *</label>
+                                            <select required name="crust_type" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select crust...">
+                                                <option value="c1" {{$lims_pizza_data->crust_type == 'c1' ? 'selected' : ''}}>New Hand Tossed</option>
+                                                <option value="c2" {{$lims_pizza_data->crust_type == 'c2' ? 'selected' : ''}}>100% Wheat Thin Crust</option>
+                                                <option value="c3" {{$lims_pizza_data->crust_type == 'c3' ? 'selected' : ''}}>Cheese Burst</option>
+                                                <option value="c4" {{$lims_pizza_data->crust_type == 'c4' ? 'selected' : ''}}>Fresh Pan Pizza</option>
+                                                <option value="c5" {{$lims_pizza_data->crust_type == 'c5' ? 'selected' : ''}}>Classic Hand Tossed</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>{{trans('file.Attach Document')}}</label> <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
-                                            <input type="file" name="document" class="form-control" >
+                                            <label>Pizza Image</label> <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
+                                            <input type="file" name="img" class="form-control" >
                                             @if($errors->has('extension'))
                                                 <span>
                                                    <strong>{{ $errors->first('extension') }}</strong>
@@ -70,9 +58,9 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12 mt-3">
-                                        <label>{{trans('file.Select Product')}}</label>
+                                        <label>Select Pizza Ingredients</label>
                                         <div class="search-box input-group">
-                                            <button type="button" class="btn btn-secondary"><i class="fa fa-barcode"></i></button>
+                                            <button class="btn btn-secondary"><i class="fa fa-circle"></i></button>
                                             <input type="text" name="product_code_name" id="lims_productcodeSearch" placeholder="Please type product code and select..." class="form-control" />
                                         </div>
                                     </div>
@@ -85,206 +73,86 @@
                                                 <thead>
                                                     <tr>
                                                         <th>{{trans('file.name')}}</th>
-                                                        <th>{{trans('file.Code')}}</th>
                                                         <th>{{trans('file.Quantity')}}</th>
-                                                        <th class="recieved-product-qty d-none">{{trans('file.Recieved')}}</th>
-                                                        <th>{{trans('file.Batch No')}}</th>
-                                                        <th>{{trans('file.Expired Date')}}</th>
-                                                        <th>{{trans('file.Net Unit Cost')}}</th>
-                                                        <th>{{trans('file.Discount')}}</th>
-                                                        <th>{{trans('file.Tax')}}</th>
-                                                        <th>{{trans('file.Subtotal')}}</th>
+                                                        <th>Unit Type</th>
                                                         <th><i class="dripicons-trash"></i></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <?php
-                                                    $temp_unit_name = [];
-                                                    $temp_unit_operator = [];
-                                                    $temp_unit_operation_value = [];
+                                                        $temp_unit_id = [];
+                                                        $temp_unit_name = [];
                                                     ?>
-                                                    @foreach($lims_product_purchase_data as $product_purchase)
+                                                    @foreach($lims_product_pizza_data as $product_pizza)
                                                     <tr>
                                                     <?php
-                                                        $product_data = DB::table('products')->find($product_purchase->product_id);
-                                                        if($product_purchase->variant_id) {
-                                                            $product_variant_data = \App\ProductVariant::FindExactProduct($product_data->id, $product_purchase->variant_id)->select('item_code')->first();
+                                                        $product_data = DB::table('products')->find($product_pizza->product_id);
+                                                        if($product_pizza->variant_id) {
+                                                            $product_variant_data = \App\ProductVariant::FindExactProduct($product_data->id, $product_pizza->variant_id)->select('item_code')->first();
                                                             $product_data->code = $product_variant_data->item_code;
                                                         }
-
-                                                        $tax = DB::table('taxes')->where('rate', $product_purchase->tax_rate)->first();
 
                                                         $units = DB::table('units')->where('base_unit', $product_data->unit_id)->orWhere('id', $product_data->unit_id)->get();
 
                                                         $unit_name = array();
-                                                        $unit_operator = array();
-                                                        $unit_operation_value = array();
+                                                        $unit_id = array();
 
                                                         foreach($units as $unit) {
-                                                            if($product_purchase->purchase_unit_id == $unit->id) {
+                                                            if($product_pizza->sale_unit_id == $unit->id) {
                                                                 array_unshift($unit_name, $unit->unit_name);
-                                                                array_unshift($unit_operator, $unit->operator);
-                                                                array_unshift($unit_operation_value, $unit->operation_value);
+                                                                array_unshift($unit_id, $unit->id);
                                                             }
                                                             else {
                                                                 $unit_name[]  = $unit->unit_name;
-                                                                $unit_operator[] = $unit->operator;
-                                                                $unit_operation_value[] = $unit->operation_value;
+                                                                $unit_id[]  = $unit->id;
+
                                                             }
                                                         }
-                                                        if($product_data->tax_method == 1){
-                                                            $product_cost = ($product_purchase->net_unit_cost + ($product_purchase->discount / $product_purchase->qty)) / $unit_operation_value[0];
-                                                        }
-                                                        else{
-                                                            $product_cost = (($product_purchase->total + ($product_purchase->discount / $product_purchase->qty)) / $product_purchase->qty) / $unit_operation_value[0];
-                                                        }
-
+                                                       $p_units = DB::table('units')->find($product_data->sale_unit_id); 
 
                                                         $temp_unit_name = $unit_name = implode(",",$unit_name) . ',';
+                                                        $temp_unit_id = $unit_id = implode(",",$unit_id) . ',';
 
-                                                        $temp_unit_operator = $unit_operator = implode(",",$unit_operator) .',';
 
-                                                        $temp_unit_operation_value = $unit_operation_value =  implode(",",$unit_operation_value) . ',';
-
-                                                        $product_batch_data = \App\ProductBatch::select('batch_no', 'expired_date')->find($product_purchase->product_batch_id);
+                                                        $product_batch_data = \App\ProductBatch::select('batch_no', 'expired_date')->find($product_pizza->product_batch_id);
                                                     ?>
                                                         <td>{{$product_data->name}} <button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button> </td>
-                                                        <td>{{$product_data->code}}</td>
-                                                        <td><input type="number" class="form-control qty" name="qty[]" value="{{$product_purchase->qty}}" step="any" required /></td>
-                                                        <td class="recieved-product-qty d-none"><input type="number" class="form-control recieved" name="recieved[]" value="{{$product_purchase->recieved}}" step="any"/></td>
-                                                        @if($product_purchase->product_batch_id)
-                                                        <td>
-                                                            <input type="hidden" name="product_batch_id[]" value="{{$product_purchase->product_batch_id}}">
-                                                            <input type="text" class="form-control batch-no" name="batch_no[]" value="{{$product_batch_data->batch_no}}" required/>
-                                                        </td>
-                                                        <td>
-                                                            <input type="text" class="form-control expired-date" name="expired_date[]" value="{{$product_batch_data->expired_date}}" required/>
-                                                        </td>
-                                                        @else
-                                                        <td>
-                                                            <input type="hidden" name="product_batch_id[]">
-                                                            <input type="text" class="form-control batch-no" name="batch_no[]" disabled />
-                                                        </td>
-                                                        <td>
-                                                            <input type="text" class="form-control expired-date" name="expired_date[]" disabled />
-                                                        </td>
-                                                        @endif
-                                                        <td class="net_unit_cost">{{ number_format((float)$product_purchase->net_unit_cost, 2, '.', '') }} </td>
-                                                        <td class="discount">{{ number_format((float)$product_purchase->discount, 2, '.', '') }}</td>
-                                                        <td class="tax">{{ number_format((float)$product_purchase->tax, 2, '.', '') }}</td>
-                                                        <td class="sub-total">{{ number_format((float)$product_purchase->total, 2, '.', '') }}</td>
+                                                        <td><input type="number" class="form-control qty" name="qty[]" value="{{$product_pizza->qty}}" step="any" required /></td>
+                                                        <td>{{$p_units->unit_name}}</td>
+                                                       
                                                         <td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>
                                                         <input type="hidden" class="product-id" name="product_id[]" value="{{$product_data->id}}"/>
                                                         <input type="hidden" class="product-code" name="product_code[]" value="{{$product_data->code}}"/>
-                                                        <input type="hidden" class="product-cost" name="product_cost[]" value="{{ $product_cost}}"/>
-                                                        <input type="hidden" class="purchase-unit" name="purchase_unit[]" value="{{$unit_name}}"/>
-                                                        <input type="hidden" class="purchase-unit-operator" value="{{$unit_operator}}"/>
-                                                        <input type="hidden" class="purchase-unit-operation-value" value="{{$unit_operation_value}}"/>
-                                                        <input type="hidden" class="net_unit_cost" name="net_unit_cost[]" value="{{$product_purchase->net_unit_cost}}" />
-                                                        <input type="hidden" class="discount-value" name="discount[]" value="{{$product_purchase->discount}}" />
-                                                        <input type="hidden" class="tax-rate" name="tax_rate[]" value="{{$product_purchase->tax_rate}}"/>
-                                                        @if($tax)
-                                                        <input type="hidden" class="tax-name" value="{{$tax->name}}" />
-                                                        @else
-                                                        <input type="hidden" class="tax-name" value="No Tax" />
-                                                        @endif
-                                                        <input type="hidden" class="tax-method" value="{{$product_data->tax_method}}"/>
-                                                        <input type="hidden" class="tax-value" name="tax[]" value="{{$product_purchase->tax}}" />
-                                                        <input type="hidden" class="subtotal-value" name="subtotal[]" value="{{$product_purchase->total}}" />
-                                                        <input type="hidden" class="imei-number" name="imei_number[]"  value="{{$product_purchase->imei_number}}" />
+                                                        <input type="hidden" class="pizza-unit" name="pizza_unit[]" value="{{$unit_name}}"/>
+                                                        <input type="hidden" class="net_unit_cost" name="net_unit_cost[]" value="{{$product_pizza->net_unit_cost}}" />
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
-                                                <tfoot class="tfoot active">
-                                                    <th colspan="2">{{trans('file.Total')}}</th>
-                                                    <th id="total-qty">{{$lims_purchase_data->total_qty}}</th>
-                                                    <th></th>
-                                                    <th></th>
-                                                    <th></th>
-                                                    <th class="recieved-product-qty d-none"></th>
-                                                    <th id="total-discount">{{ number_format((float)$lims_purchase_data->total_discount, 2, '.', '') }}</th>
-                                                    <th id="total-tax">{{ number_format((float)$lims_purchase_data->total_tax, 2, '.', '')}}</th>
-                                                    <th id="total">{{ number_format((float)$lims_purchase_data->total_cost, 2, '.', '') }}</th>
-                                                    <th><i class="dripicons-trash"></i></th>
-                                                </tfoot>
+                                                
                                             </table>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="total_qty" value="{{$lims_purchase_data->total_qty}}" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="total_discount" value="{{$lims_purchase_data->total_discount}}" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="total_tax" value="{{$lims_purchase_data->total_tax}}" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="total_cost" value="{{$lims_purchase_data->total_cost}}" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="item" value="{{$lims_purchase_data->item}}" />
-                                            <input type="hidden" name="order_tax" value="{{$lims_purchase_data->order_tax}}"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="grand_total" value="{{$lims_purchase_data->grand_total}}" />
-                                            <input type="hidden" name="paid_amount" value="{{$lims_purchase_data->paid_amount}}" />
-                                        </div>
-                                    </div>
-                                </div>
+                                
                                 <div class="row mt-5">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>{{trans('file.Order Tax')}}</label>
-                                            <input type="hidden" name="order_tax_rate_hidden" value="{{$lims_purchase_data->order_tax_rate}}">
-                                            <select class="form-control" name="order_tax_rate">
-                                                <option value="0">{{trans('file.No Tax')}}</option>
-                                                @foreach($lims_tax_list as $tax)
-                                                <option value="{{$tax->rate}}">{{$tax->name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>
-                                                <strong>{{trans('file.Discount')}}</strong>
-                                            </label>
-                                            <input type="number" name="order_discount" class="form-control" value="{{$lims_purchase_data->order_discount}}" step="any" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>
-                                                <strong>{{trans('file.Shipping Cost')}}</strong>
-                                            </label>
-                                            <input type="number" name="shipping_cost" class="form-control" value="{{$lims_purchase_data->shipping_cost}}" step="any" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-8">
                                         <div class="form-group">
                                             <label>{{trans('file.Note')}}</label>
-                                            <textarea rows="5" class="form-control" name="note" >{{ $lims_purchase_data->note }}</textarea>
+                                            <textarea rows="3" class="form-control" name="note">{{$lims_pizza_data->note}}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>
+                                                <strong>Pizza Price</strong>
+                                            </label>
+                                            <input type="number" name="price" class="form-control" step="any" value="{{$lims_pizza_data->price}}"/>
                                         </div>
                                     </div>
                                 </div>
+                               
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-button">
+                                    <input type="submit" value="Update" class="btn btn-primary" id="submit-button">
                                 </div>
                             </div>
                         </div>
@@ -294,28 +162,7 @@
             </div>
         </div>
     </div>
-    <div class="container-fluid">
-        <table class="table table-bordered table-condensed totals">
-            <td><strong>{{trans('file.Items')}}</strong>
-                <span class="pull-right" id="item">0.00</span>
-            </td>
-            <td><strong>{{trans('file.Total')}}</strong>
-                <span class="pull-right" id="subtotal">0.00</span>
-            </td>
-            <td><strong>{{trans('file.Order Tax')}}</strong>
-                <span class="pull-right" id="order_tax">0.00</span>
-            </td>
-            <td><strong>{{trans('file.Order Discount')}}</strong>
-                <span class="pull-right" id="order_discount">0.00</span>
-            </td>
-            <td><strong>{{trans('file.Shipping Cost')}}</strong>
-                <span class="pull-right" id="shipping_cost">0.00</span>
-            </td>
-            <td><strong>{{trans('file.grand total')}}</strong>
-                <span class="pull-right" id="grand_total">0.00</span>
-            </td>
-        </table>
-    </div>
+   
     <div id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
         <div role="document" class="modal-dialog">
             <div class="modal-content">
@@ -374,8 +221,8 @@
 @push('scripts')
 <script type="text/javascript">
 
-    $("ul#purchase").siblings('a').addClass("active");
-    $("ul#purchase").addClass("show");
+    $("ul#pizza").siblings('a').addClass("active");
+    $("ul#pizza").addClass("show");
 
 // array data depend on warehouse
 var lims_product_array = [];
@@ -414,11 +261,11 @@ for(rowindex  =0; rowindex <= rownumber; rowindex++){
     tax_rate.push(parseFloat($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-rate').val()));
     tax_name.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-name').val());
     tax_method.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.tax-method').val());
-    temp_unit_name = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.purchase-unit').val().split(',');
-    unit_name.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.purchase-unit').val());
-    unit_operator.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.purchase-unit-operator').val());
-    unit_operation_value.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.purchase-unit-operation-value').val());
-    $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.purchase-unit').val(temp_unit_name[0]);
+    temp_unit_name = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.pizza-unit').val().split(',');
+    unit_name.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.pizza-unit').val());
+    unit_operator.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.pizza-unit-operator').val());
+    unit_operation_value.push($('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.pizza-unit-operation-value').val());
+    $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.pizza-unit').val(temp_unit_name[0]);
 }
 
 $('.selectpicker').selectpicker({
@@ -432,7 +279,7 @@ $('select[name="supplier_id"]').val($('input[name="supplier_id_hidden"]').val())
 $('select[name="warehouse_id"]').val($('input[name="warehouse_id_hidden"]').val());
 $('select[name="status"]').val($('input[name="status_hidden"]').val());
 $('select[name="order_tax_rate"]').val($('input[name="order_tax_rate_hidden"]').val());
-$('select[name="purchase_status"]').val($('input[name="purchase_status_hidden"]').val());
+$('select[name="pizza_status"]').val($('input[name="pizza_status_hidden"]').val());
 $('.selectpicker').selectpicker('refresh');
 
 $('#item').text($('input[name="item"]').val() + '(' + $('input[name="total_qty"]').val() + ')');
@@ -628,7 +475,7 @@ $('button[name="update_btn"]').on("click", function() {
     var position = $('select[name="edit_unit"]').val();
     var temp_operator = temp_unit_operator[position];
     var temp_operation_value = temp_unit_operation_value[position];
-    $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.purchase-unit').val(temp_unit_name[position]);
+    $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.pizza-unit').val(temp_unit_name[position]);
     temp_unit_name.splice(position, 1);
     temp_unit_operator.splice(position, 1);
     temp_unit_operation_value.splice(position, 1);
@@ -664,79 +511,81 @@ function productSearch(data) {
             });
             $("input[name='product_code_name']").val('');
             if(flag){
-                var newRow = $("<tr>");
-                var cols = '';
-                temp_unit_name = (data[6]).split(',');
-                cols += '<td>' + data[0] + '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
-                cols += '<td>' + data[1] + '</td>';
-                cols += '<td><input type="number" class="form-control qty" name="qty[]" value="1" step="any" required /></td>';
-                if($('select[name="status"]').val() == 1)
-                    cols += '<td class="recieved-product-qty d-none"><input type="number" class="form-control recieved" name="recieved[]" value="1" step="any" /></td>';
-                else if($('select[name="status"]').val() == 2)
-                    cols += '<td class="recieved-product-qty"><input type="number" class="form-control recieved" name="recieved[]" value="1" step="any"/></td>';
-                else
-                    cols += '<td class="recieved-product-qty d-none"><input type="number" class="form-control recieved" name="recieved[]" value="0" step="any"/></td>';
-                if(data[10]) {
-                    cols += '<td><input type="text" class="form-control batch-no" name="batch_no[]" required/></td>';
-                    cols += '<td><input type="text" class="form-control expired-date" name="expired_date[]" required/></td>';
-                }
-                else {
-                    cols += '<td><input type="text" class="form-control batch-no" name="batch_no[]" disabled/></td>';
-                    cols += '<td><input type="text" class="form-control expired-date" name="expired_date[]" disabled/></td>';
-                }
-                cols += '<td class="net_unit_cost"></td>';
-                cols += '<td class="discount">0.00</td>';
-                cols += '<td class="tax"></td>';
-                cols += '<td class="sub-total"></td>';
-                cols += '<td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>';
-                cols += '<input type="hidden" class="product-code" name="product_code[]" value="' + data[1] + '"/>';
-                cols += '<input type="hidden" class="product-id" name="product_id[]" value="' + data[9] + '"/>';
-                cols += '<input type="hidden" class="purchase-unit" name="purchase_unit[]" value="' + temp_unit_name[0] + '"/>';
-                cols += '<input type="hidden" class="net_unit_cost" name="net_unit_cost[]" />';
-                cols += '<input type="hidden" class="discount-value" name="discount[]" />';
-                cols += '<input type="hidden" class="tax-rate" name="tax_rate[]" value="' + data[3] + '"/>';
-                cols += '<input type="hidden" class="tax-value" name="tax[]" />';
-                cols += '<input type="hidden" class="subtotal-value" name="subtotal[]" />';
-                cols += '<input type="hidden" class="imei-number" name="imei_number[]" />';
+                    var newRow = $("<tr>");
+                    var cols = '';
+                    temp_unit_name = (data[6]).split(',');
+                    cols += '<td>' + data[0] + '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
+                    // cols += '<td>' + data[1] + '</td>';
+                    cols += '<td><input type="number" class="form-control qty" name="qty[]" value="1" step="any" required/></td>';
+                    cols += '<td>' + temp_unit_name[0] + ' </td>';
+                    // if($('select[name="status"]').val() == 1)
+                    //     cols += '<input type="number" class="form-control recieved" name="recieved[]" value="1" step="any"/>';
+                    // else if($('select[name="status"]').val() == 2)
+                    //     cols += '<input type="number" class="form-control recieved" name="recieved[]" value="1" step="any"/></td>';
+                    // else
+                    //     cols += '<input type="hidden" class="form-control recieved" name="recieved[]" value="0" step="any"/>';
+                    // if(data[10]) {
+                    //     cols += '<input type="hidden" class="form-control batch-no" name="batch_no[]" required/>';
+                    //     cols += '<input type="hidden" class="form-control expired-date" name="expired_date[]" required/>';
+                    // }
+                    // else {
+                    //     cols += '<input type="hiddden" class="form-control batch-no" name="batch_no[]" disabled/>';
+                    //     cols += '<input type="hidden" class="form-control expired-date" name="expired_date[]" disabled/>';
+                    // }
 
-                newRow.append(cols);
-                $("table.order-list tbody").prepend(newRow);
+                    // cols += '<td class="net_unit_cost"></td>';
+                    // cols += '<td class="discount">0.00</td>';
+                    // cols += '<td class="tax"></td>';
+                    // cols += '<td class="sub-total"></td>';
+                    // cols += '<input type="hidden" class="sale-unit" name="unit[]" value="' + temp_unit_name[0] + '"/>';
+                    cols += '<td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>';
+                    // cols += '<input type="hidden" class="product-code" name="product_code[]" value="' + data[1] + '"/>';
+                    cols += '<input type="hidden" class="product-id" name="product_id[]" value="' + data[9] + '"/>';
+                    // cols += '<input type="hidden" class="net_unit_cost" name="net_unit_cost[]" />';
+                    // cols += '<input type="hidden" class="discount-value" name="discount[]" />';
+                    // cols += '<input type="hidden" class="tax-rate" name="tax_rate[]" value="' + data[3] + '"/>';
+                    // cols += '<input type="hidden" class="tax-value" name="tax[]" />';
+                    // cols += '<input type="hidden" class="subtotal-value" name="subtotal[]" />';
+                    // cols += '<input type="hidden" class="imei-number" name="imei_number[]" />';
 
-                rowindex = newRow.index();
-                product_cost.splice(rowindex, 0, parseFloat(data[2]));
-                product_discount.splice(rowindex, 0, '0.00');
-                tax_rate.splice(rowindex, 0, parseFloat(data[3]));
-                tax_name.splice(rowindex, 0, data[4]);
-                tax_method.splice(rowindex, 0, data[5]);
-                unit_name.splice(rowindex, 0, data[6]);
-                unit_operator.splice(rowindex, 0, data[7]);
-                unit_operation_value.splice(rowindex, 0, data[8]);
-                is_imei.splice(rowindex, 0, data[11]);
-                calculateRowProductData(1);
-                if(data[11]) {
-                    $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.edit-product').click();
+                    newRow.append(cols);
+                    $("table.order-list tbody").prepend(newRow);
+
+                    rowindex = newRow.index();
+                    product_cost.splice(rowindex,0, parseFloat(data[2]));
+                    product_discount.splice(rowindex,0, '0.00');
+                    tax_rate.splice(rowindex,0, parseFloat(data[3]));
+                    tax_name.splice(rowindex,0, data[4]);
+                    tax_method.splice(rowindex,0, data[5]);
+                    unit_name.splice(rowindex,0, data[6]);
+                    unit_operator.splice(rowindex,0, data[7]);
+                    unit_operation_value.splice(rowindex,0, data[8]);
+                    is_imei.splice(rowindex, 0, data[11]);
+                    calculateRowProductData(1);
+                    if(data[11]) {
+                        $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.edit-product').click();
+                    }
                 }
-            }
         }
     });
 }
-function checkQuantity(purchase_qty, flag) {
+function checkQuantity(pizza_qty, flag) {
     var row_product_code = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(2)').text();
     var pos = product_code.indexOf(row_product_code);
     var operator = unit_operator[rowindex].split(',');
     var operation_value = unit_operation_value[rowindex].split(',');
     if(operator[0] == '*')
-    	total_qty = purchase_qty * operation_value[0];
+    	total_qty = pizza_qty * operation_value[0];
     else if(operator[0] == '/')
-    	total_qty = purchase_qty / operation_value[0];
+    	total_qty = pizza_qty / operation_value[0];
 
     $('#editModal').modal('hide');
-    $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(purchase_qty);
+    $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(pizza_qty);
     var status = $('select[name="status"]').val();
     if(status == '1' || status == '2' )
-        $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.recieved').val(purchase_qty);
+        $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.recieved').val(pizza_qty);
 
-    calculateRowProductData(purchase_qty);
+    calculateRowProductData(pizza_qty);
 }
 
 function calculateRowProductData(quantity) {
@@ -886,7 +735,7 @@ $(window).keydown(function(e){
     }
 });
 
-$('#purchase-form').on('submit',function(e){
+$('#pizza-form').on('submit',function(e){
     var rownumber = $('table.order-list tbody tr:last').index();
     if (rownumber < 0) {
         alert("Please insert product to order table!")
@@ -907,7 +756,7 @@ $('#purchase-form').on('submit',function(e){
             }
         });
         if(!flag){
-            alert('Quantity and Recieved value is same! Please Change Purchase Status or Recieved value');
+            alert('Quantity and Recieved value is same! Please Change pizza Status or Recieved value');
             e.preventDefault();
         }
         else
