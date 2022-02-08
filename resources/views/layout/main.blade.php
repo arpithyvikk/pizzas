@@ -193,6 +193,33 @@
               </li>
               @endif
 
+              {{-- for order --}}
+              <?php
+                $index_permission = DB::table('permissions')->where('name', 'orders-index')->first();
+                  $index_permission_active = DB::table('role_has_permissions')->where([
+                        ['permission_id', $index_permission->id],
+                        ['role_id', $role->id]
+                    ])->first();
+              ?>
+              @if($index_permission_active)
+              <li><a href="#order" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-circle"></i><span>Orders</span></a>
+                <ul id="order" class="collapse list-unstyled ">
+                  <li id="order-list-menu"><a href="{{route('orders.index')}}">Order List</a></li>
+                  <?php
+                    $add_permission = DB::table('permissions')->where('name', 'orders-add')->first();
+                    $add_permission_active = DB::table('role_has_permissions')->where([
+                        ['permission_id', $add_permission->id],
+                        ['role_id', $role->id]
+                    ])->first();
+                  ?>
+                  @if($add_permission_active)
+                  <li id="order-create-menu"><a href="{{route('orders.create')}}">Add order</a></li>
+                  <li id="order-import-menu"><a href="{{url('orders/order_by_csv')}}">{{trans('file.Import order By CSV')}}</a></li>
+                  @endif
+                </ul>
+              </li>
+              @endif
+              
               <?php
                 $sale_index_permission = DB::table('permissions')->where('name', 'sales-index')->first();
                 $sale_index_permission_active = DB::table('role_has_permissions')->where([

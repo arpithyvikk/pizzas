@@ -12,6 +12,7 @@
 */
 
 use App\Http\Controllers\PizzaController;
+use App\Http\Controllers\OrderController;
 
 Auth::routes();
 
@@ -172,6 +173,11 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 	// Route::post('importpizza', 'PizzaController@importPizza')->name('pizza.import');
 	Route::post('pizzas/deletebyselection', 'PizzaController@deleteBySelection');
 	Route::resource('pizzas', 'PizzaController');
+
+
+	//for orrders
+	Route::resource('orders', 'OrderController');
+
 
 	Route::get('transfers/product_transfer/{id}','TransferController@productTransferData');
 	Route::get('transfers/transfer_by_csv', 'TransferController@transferByCsv');

@@ -58,7 +58,7 @@ class RoleController extends Controller
     {
         $this->validate($request, [
             'name' => [
-                'max:255',
+                'max:555',
                 Rule::unique('roles')->ignore($request->role_id)->where(function ($query) {
                     return $query->where('is_active', 1);
                 }),
@@ -68,6 +68,7 @@ class RoleController extends Controller
         $input = $request->all();
         $lims_role_data = Roles::where('id', $input['role_id'])->first();
         $lims_role_data->update($input);
+        
         return redirect('role')->with('message', 'Data updated successfully');
     }
 
@@ -165,41 +166,77 @@ class RoleController extends Controller
             $role->revokePermissionTo('purchases-delete');
 
         
-            if($request->has('pizzas-index')){
-                $permission = Permission::firstOrCreate(['name' => 'pizzas-index']);
-                if(!$role->hasPermissionTo('pizzas-index')){
-                    $role->givePermissionTo($permission);
-                }
+        if($request->has('pizzas-index')){
+            $permission = Permission::firstOrCreate(['name' => 'pizzas-index']);
+            if(!$role->hasPermissionTo('pizzas-index')){
+                $role->givePermissionTo($permission);
             }
-            else
-                $role->revokePermissionTo('pizzas-index');
-    
-            if($request->has('pizzas-add')){
-                $permission = Permission::firstOrCreate(['name' => 'pizzas-add']);
-                if(!$role->hasPermissionTo('pizzas-add')){
-                    $role->givePermissionTo($permission);
-                }
+        }
+        else
+            $role->revokePermissionTo('pizzas-index');
+
+        if($request->has('pizzas-add')){
+            $permission = Permission::firstOrCreate(['name' => 'pizzas-add']);
+            if(!$role->hasPermissionTo('pizzas-add')){
+                $role->givePermissionTo($permission);
             }
-            else
-                $role->revokePermissionTo('pizzas-add');
-    
-            if($request->has('pizzas-edit')){
-                $permission = Permission::firstOrCreate(['name' => 'pizzas-edit']);
-                if(!$role->hasPermissionTo('pizzas-edit')){
-                    $role->givePermissionTo($permission);
-                }
+        }
+        else
+            $role->revokePermissionTo('pizzas-add');
+
+        if($request->has('pizzas-edit')){
+            $permission = Permission::firstOrCreate(['name' => 'pizzas-edit']);
+            if(!$role->hasPermissionTo('pizzas-edit')){
+                $role->givePermissionTo($permission);
             }
-            else
-                $role->revokePermissionTo('pizzas-edit');
-    
-            if($request->has('pizzas-delete')){
-                $permission = Permission::firstOrCreate(['name' => 'pizzas-delete']);
-                if(!$role->hasPermissionTo('pizzas-delete')){
-                    $role->givePermissionTo($permission);
-                }
+        }
+        else
+            $role->revokePermissionTo('pizzas-edit');
+
+        if($request->has('pizzas-delete')){
+            $permission = Permission::firstOrCreate(['name' => 'pizzas-delete']);
+            if(!$role->hasPermissionTo('pizzas-delete')){
+                $role->givePermissionTo($permission);
             }
-            else
-                $role->revokePermissionTo('pizzas-delete');
+        }
+        else
+            $role->revokePermissionTo('pizzas-delete');
+
+        if($request->has('orders-index')){
+            $permission = Permission::firstOrCreate(['name' => 'orders-index']);
+            if(!$role->hasPermissionTo('orders-index')){
+                $role->givePermissionTo($permission);
+            }
+        }
+        else
+            $role->revokePermissionTo('orders-index');
+
+        if($request->has('orders-add')){
+            $permission = Permission::firstOrCreate(['name' => 'orders-add']);
+            if(!$role->hasPermissionTo('orders-add')){
+                $role->givePermissionTo($permission);
+            }
+        }
+        else
+            $role->revokePermissionTo('orders-add');
+
+        if($request->has('orders-edit')){
+            $permission = Permission::firstOrCreate(['name' => 'orders-edit']);
+            if(!$role->hasPermissionTo('orders-edit')){
+                $role->givePermissionTo($permission);
+            }
+        }
+        else
+            $role->revokePermissionTo('orders-edit');
+
+        if($request->has('orders-delete')){
+            $permission = Permission::firstOrCreate(['name' => 'orders-delete']);
+            if(!$role->hasPermissionTo('orders-delete')){
+                $role->givePermissionTo($permission);
+            }
+        }
+        else
+            $role->revokePermissionTo('orders-delete');
             
 
         if($request->has('sales-index')){
