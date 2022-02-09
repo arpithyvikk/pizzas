@@ -68,9 +68,9 @@ class PizzaController extends Controller
     {
         $columns = array(
             1 => 'created_at',
-            3 => 'name',
-            4 => 'code',
-            7 => 'total_item',
+            2 => 'name',
+            3 => 'code',
+            4 => 'total_item',
         );
 
         $totalData = Pizza::whereDate('created_at', '>=', $request->input('starting_date'))->whereDate('created_at', '<=', $request->input('ending_date'))->count();
@@ -547,18 +547,9 @@ class PizzaController extends Controller
     {
         $validator = $request->validate([
             'name' => 'required',
-            'size' => 'required',
-            'price' => 'required',
-            'crust_type' => 'required',
+            'code' => 'required',
         ]);
-        // dd($request)->toArray();
-        if (!empty($request->file('img'))) {
-            $image = $request->file('img');
-            $imageName = time() . '.' . $image->extension();
-            $image->move(public_path('images/pizza'), $imageName);
-        } else {
-            $imageName = 'pizza_image1.png';
-        }
+        
 
         // $id = $request->id;
         $item_count = count($request->product_id);
@@ -566,13 +557,9 @@ class PizzaController extends Controller
     
         $pizza = Pizza::find($id);
         $pizza->name = $request->name;
-        $pizza->size = $request->size;
-        $pizza->price = $request->price;
-        $pizza->crust_type = $request->crust_type;
-        $pizza->image = $imageName;
+        $pizza->code = $request->code;
         $pizza->total_item = $item_count;
         $pizza->user_id = Auth::id();
-        $pizza->note = $request->note;
         $pizza->save();
         
         $lims_product_pizza_data = ProductPizza::where('pizza_id', $id)->get();
