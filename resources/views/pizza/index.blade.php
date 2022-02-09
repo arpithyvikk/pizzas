@@ -46,13 +46,9 @@
                 <tr>
                     <th class="not-exported"></th>
                     <th>Date</th>
-                    <th>Image</th>
                     <th>Name</th>
-                    <th>Size</th>
-                    <th>Crust Type</th>
-                    <th>Price</th>
+                    <th>Code</th>
                     <th>No of items</th>
-                    <th>Note</th>
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
             </thead>
@@ -347,13 +343,9 @@
             "columns": [
                 {"data": "key"},
                 {"data": "date"},
-                {"data": "image"},
                 {"data": "name"},
-                {"data": "size"},
-                {"data": "crust_type"},
-                {"data": "price"},
+                {"data": "code"},
                 {"data": "total_item"},
-                {"data": "note"},
                 {"data": "options"},
             ],
             'language': {
@@ -370,7 +362,7 @@
             'columnDefs': [
                 {
                     "orderable": false,
-                    'targets': [0,8,9]
+                    'targets': [0]
                 },
                 {
                     'render': function(data, type, row, meta){
@@ -497,7 +489,7 @@
 
     function pizzaDetails(pizza){
         
-        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+pizza[0]+'<br><br><strong>Name: </strong>'+pizza[5]+'<br><strong>Size: </strong>'+pizza[6]+'<br><strong>Crust Type: </strong>'+pizza[7]+'<br><strong>Price: </strong>'+pizza[8];
+        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+pizza[0]+'<br><br><strong>Name: </strong>'+pizza[4]+'<br><strong>Code: </strong>'+pizza[5];
 
         $.get('pizzas/product_pizza/' + pizza[1], function(data){
             $(".product-pizza-list tbody").remove();
@@ -530,7 +522,7 @@
              $("table.product-pizza-list").append(newBody);
         });
 
-        var htmlfooter = '<p><strong>{{trans("file.Note")}}:</strong> '+pizza[2]+'</p><strong>{{trans("file.Created By")}}:</strong><br>'+pizza[3]+'<br>'+pizza[4];
+        var htmlfooter = '<strong>{{trans("file.Created By")}}:</strong><br>'+pizza[2]+'<br>'+pizza[3];
 
         $('#pizza-content').html(htmltext);
         $('#pizza-footer').html(htmlfooter);

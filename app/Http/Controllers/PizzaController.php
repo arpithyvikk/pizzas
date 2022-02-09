@@ -68,18 +68,18 @@ class PizzaController extends Controller
     {
         $columns = array(
             1 => 'created_at',
-            2 => 'image',
             3 => 'name',
-            4 => 'size',
-            5 => 'crust_type',
-            6 => 'price',
+            4 => 'code',
             7 => 'total_item',
         );
 
         $totalData = Pizza::whereDate('created_at', '>=', $request->input('starting_date'))->whereDate('created_at', '<=', $request->input('ending_date'))->count();
 
         $totalFiltered = $totalData;
-
+        $limit = $totalData;
+        $start = $request->input('start');
+        $order = $columns[$request->input('order.0.column')];
+        $dir = $request->input('order.0.dir');
         if ($request->input('length') != -1) {
             $limit = $request->input('length');
         } else {
@@ -87,8 +87,6 @@ class PizzaController extends Controller
         }
 
         $start = $request->input('start');
-        $order = $columns[$request->input('order.0.column')];
-        $dir = $request->input('order.0.dir');
         
         if (empty($request->input('search.value'))) {
             
@@ -116,16 +114,13 @@ class PizzaController extends Controller
                         ['pizzas.user_id', Auth::id()]
                     ])
                     ->orwhere([
-                        ['pizzas.price', 'LIKE', "%{$search}%"],
-                        ['pizzas.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['pizzas.note', 'LIKE', "%{$search}%"],
+                        ['pizzas.code', 'LIKE', "%{$search}%"],
                         ['pizzas.user_id', Auth::id()]
                     ])
                    ->offset($start)
                     ->limit($limit)
-                    ->orderBy($order, $dir)->get();
+                    ->orderBy($order, $dir)
+                    ->get();
 
                 $totalFiltered = Pizza::select('pizzas.*')
                     ->whereDate('pizzas.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
@@ -138,11 +133,7 @@ class PizzaController extends Controller
                         ['pizzas.user_id', Auth::id()]
                     ])
                     ->orwhere([
-                        ['pizzas.price', 'LIKE', "%{$search}%"],
-                        ['pizzas.user_id', Auth::id()]
-                    ])
-                    ->orwhere([
-                        ['pizzas.note', 'LIKE', "%{$search}%"],
+                        ['pizzas.code', 'LIKE', "%{$search}%"],
                         ['pizzas.user_id', Auth::id()]
                     ])
                     ->where('pizzas.user_id', Auth::id())
@@ -150,8 +141,8 @@ class PizzaController extends Controller
             } else {
                 $pizzas = Pizza::select('pizzas.*')
                     ->whereDate('pizzas.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
-                    ->orwhere('pizzas.name', 'LIKE', "%{$search}%")->orwhere('pizzas.created_at', 'LIKE', "%{$search}%")
-                    ->orwhere('pizzas.price', 'LIKE', "%{$search}%")->orwhere('pizzas.note', 'LIKE', "%{$search}%")
+                    ->orwhere('pizzas.name', 'LIKE', "%{$search}%")
+                    ->orwhere('pizzas.code', 'LIKE', "%{$search}%")
                     ->offset($start)
                     ->limit($limit)
                     ->orderBy($order, $dir)
@@ -159,8 +150,8 @@ class PizzaController extends Controller
 
                 $totalFiltered = Pizza::select('pizzas.*')
                     ->whereDate('pizzas.created_at', '=', date('Y-m-d', strtotime(str_replace('/', '-', $search))))
-                    ->orwhere('pizzas.name', 'LIKE', "%{$search}%")->orwhere('pizzas.created_at', 'LIKE', "%{$search}%")
-                    ->orwhere('pizzas.price', 'LIKE', "%{$search}%")->orwhere('pizzas.note', 'LIKE', "%{$search}%")
+                    ->orwhere('pizzas.name', 'LIKE', "%{$search}%")
+                    ->orwhere('pizzas.code', 'LIKE', "%{$search}%")
                     ->count();
             }
         }
@@ -171,55 +162,10 @@ class PizzaController extends Controller
                 $nestedData['key'] = $key;
                 $nestedData['date'] = date(config('date_format'), strtotime($pizza->created_at->toDateString()));
                 $nestedData['name'] = $pizza->name;
-                $nestedData['price'] = '₹'.$pizza->price;
-                $nestedData['image'] = $pizza->image;
+                $nestedData['code'] = $pizza->code;
                 $nestedData['total_item'] = $pizza->total_item;
-                $nestedData['note'] = $pizza->note;
+                
               
-                if($pizza->size == 's')
-                {
-                    $pizza->size = 'Small';
-                }
-                elseif($pizza->size == 'm')
-                {
-                    $pizza->size = 'Medium';
-                }
-                elseif($pizza->size == 'l')
-                {
-                    $pizza->size = 'Large';
-                }
-                else
-                {
-                    $pizza->size = 'size not define';
-                }
-
-                $nestedData['size'] = $pizza->size;
-
-                switch ($pizza->crust_type) {
-                    case 'c1':
-                        $pizza->crust_type = 'New Hand Tossed';
-                        break;
-                        case 'c1':
-                            $pizza->crust_type = 'New Hand Tossed';
-                            break;
-                        case 'c2':
-                            $pizza->crust_type = '100% Wheat Thin Crust';
-                            break;
-                        case 'c3':
-                            $pizza->crust_type = 'Cheese Burst';
-                            break;
-                        case 'c4':
-                            $pizza->crust_type = 'Fresh Pan Pizza';
-                            break;
-                        case 'c5':
-                            $pizza->crust_type = 'Classic Hand Tossed';
-                            break;
-                    default:
-                        $pizza->crust_type = 'Crust type not define';
-                        break;
-                }
-
-                $nestedData['crust_type'] = $pizza->crust_type;
 
                 // $nestedData['supplier'] = $supplier->name;
                 // if ($pizza->status == 1) {
@@ -271,7 +217,7 @@ class PizzaController extends Controller
                 // data for purchase details by one click
                 $user = User::find($pizza->user_id);
                 // $nestedData['pizza'] = array('[ "'.date(config('date_format'), strtotime($pizza->created_at->toDateString())).'"', ' "'.$purchase->reference_no.'"', ' "'.$purchase_status.'"',  ' "'.$purchase->id.'"', ' "'.$purchase->warehouse->name.'"', ' "'.$purchase->warehouse->phone.'"', ' "'.$purchase->warehouse->address.'"', ' "'.preg_replace('/\s+/S', " ", $purchase->note).'"', ' "'.$user->name.'"', ' "'.$user->email.'"]');
-                $nestedData['pizza'] = array('["'.date(config('date_format'), strtotime($pizza->created_at->toDateString())).'"', ' "'.$pizza->id.'"', ' "'.$pizza->note.'"', ' "'.$user->name.'"',' "'.$user->email.'"',' "'.$pizza->name.'"',' "'.$pizza->size.'"',' "'.$pizza->crust_type.'"',' " ₹'.$pizza->price.'"]');
+                $nestedData['pizza'] = array('["'.date(config('date_format'), strtotime($pizza->created_at->toDateString())).'"', ' "'.$pizza->id.'"', ' "'.$user->name.'"',' "'.$user->email.'"',' "'.$pizza->name.'"',' "'.$pizza->code.'"]');
                 $data[] = $nestedData;
             }
         }
@@ -383,18 +329,9 @@ class PizzaController extends Controller
     {
         $validator = $request->validate([
             'name' => 'required',
-            'size' => 'required',
-            'price' => 'required',
-            'crust_type' => 'required',
+            'code' => 'required',
         ]);
-        // dd($request)->toArray();
-        if (!empty($request->file('img'))) {
-            $image = $request->file('img');
-            $imageName = time() . '.' . $image->extension();
-            $image->move(public_path('images/pizza'), $imageName);
-        } else {
-            $imageName = 'pizza_image1.png';
-        }
+        
 
         // $id = $request->id;
         $item_count = count($request->product_id);
@@ -402,20 +339,15 @@ class PizzaController extends Controller
     
         $pizza = new Pizza;
         $pizza->name = $request->name;
-        $pizza->size = $request->size;
-        $pizza->price = $request->price;
-        $pizza->crust_type = $request->crust_type;
-        $pizza->image = $imageName;
+        $pizza->code = $request->code;
         $pizza->total_item = $item_count;
         $pizza->user_id = Auth::id();
-        $pizza->note = $request->note;
         $pizza->save();
 
         $pizzas = Pizza::latest()->first();
         $pizza_id = $pizzas->id;
 
         for ($i=0; $i < $item_count; $i++) { 
-            
             $product_pizza = new ProductPizza;
             $product_pizza->pizza_id = $pizza_id;
             $product_pizza->product_id = $request->product_id[$i];
@@ -439,7 +371,6 @@ class PizzaController extends Controller
             $product_pizza[1][$key] = $product_pizza_data->qty;
             $product_pizza[2][$key] = $unit->unit_name;
         }
-
         return $product_pizza;
     }
 

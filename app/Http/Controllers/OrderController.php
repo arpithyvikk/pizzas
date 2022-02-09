@@ -32,7 +32,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $role = Role::find(Auth::user()->role_id);
-        if ($role->hasPermissionTo('pizzas-index')) {
+        if ($role->hasPermissionTo('orders-index')) {
             if ($request->input('warehouse_id')) {
                 $warehouse_id = $request->input('warehouse_id');
             } else {
