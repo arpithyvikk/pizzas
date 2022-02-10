@@ -52,7 +52,7 @@
                     <td>
                         <input type="hidden" name="pizza_id[]" value="{{$pizza->id}}">
                         <input type="number" name="quantity[]" class="form-control" value="0" style="width:50%"></td>
-                    <td><button class="btn btn-default btn-sm pizza_view" data-id="{{$pizza->id}}" data-date="{{$p_date}}" data-name="{{$pizza->name}}" data-code="{{$pizza->code}}"><i class="fa fa-eye"></i> View</button></td>
+                    <td><button type="button" class="btn btn-default btn-sm pizza_view" data-id="{{$pizza->id}}" data-date="{{$p_date}}" data-name="{{$pizza->name}}" data-code="{{$pizza->code}}"><i class="fa fa-eye"></i> View</button></td>
                 </tr>
                 @endforeach
             </tbody>            
@@ -177,40 +177,7 @@
         $('input[name="order_id"]').val(order_id);
     });
 
-    $(document).on("click", "#pizza_view", function(event) {
-        var id = $(this).data('id').toString();
-        $.get('orders/getpayment/' + id, function(data) {
-            $(".payment-list tbody").remove();
-            var newBody = $("<tbody>");
-            payment_date  = data[0];
-            payment_reference = data[1];
-            paid_amount = data[2];
-            paying_method = data[3];
-            payment_id = data[4];
-            payment_note = data[5];
-            cheque_no = data[6];
-            change = data[7];
-            paying_amount = data[8];
-            account_name = data[9];
-            account_id = data[10];
 
-            $.each(payment_date, function(index){
-                var newRow = $("<tr>");
-                var cols = '';
-
-                cols += '<td>' + payment_date[index] + '</td>';
-                cols += '<td>' + payment_reference[index] + '</td>';
-                cols += '<td>' + account_name[index] + '</td>';
-                cols += '<td>' + paid_amount[index] + '</td>';
-                cols += '<td>' + paying_method[index] + '</td>';
-                cols += '<td><div class="btn-group"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action<span class="caret"></span><span class="sr-only">Toggle Dropdown</span></button><ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu"><li><button type="button" class="btn btn-link edit-btn" data-id="' + payment_id[index] +'" data-clicked=false data-toggle="modal" data-target="#edit-payment"><i class="dripicons-document-edit"></i>Edit</button></li><li class="divider"></li><li><input type="hidden" name="id" value="' + payment_id[index] + '" /> <button type="submit" class="btn btn-link" onclick="return confirmDeletePayment()"><i class="dripicons-trash"></i> Delete</button></li></ul></div></td>'
-                newRow.append(cols);
-                newBody.append(newRow);
-                $("table.payment-list").append(newBody);
-            });
-            $('#view-payment').modal('show');
-        });
-    });
 
     $(document).on("click", ".pizza_view", function pizzaDetails(){
         

@@ -29,7 +29,15 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+                                <div class="row">
+                                    <div class="col-md-12 mt-3">
+                                        <label>Select Pizza Ingredients</label>
+                                        <div class="search-box input-group">
+                                            <button class="btn btn-secondary"><i class="fa fa-circle"></i></button>
+                                            <input type="text" name="product_code_name" id="lims_productcodeSearch" placeholder="Please type product code and select..." class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="row mt-5">
                                     <div class="col-md-12">
                                         <h5>{{trans('file.Order Table')}} *</h5>
