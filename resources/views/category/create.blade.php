@@ -28,8 +28,8 @@
                     <th>{{trans('file.category')}}</th>
                     <th>{{trans('file.Parent Category')}}</th>
                     <th>{{trans('file.Number of Product')}}</th>
-                    <th>{{trans('file.Stock Quantity')}}</th>
-                    <th>{{trans('file.Stock Worth (Price/Cost)')}}</th>
+                    {{-- <th>{{trans('file.Stock Quantity')}}</th> --}}
+                    {{-- <th>{{trans('file.Stock Worth (Price/Cost)')}}</th> --}}
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
             </thead>
@@ -133,7 +133,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label> {{trans('file.Sample File')}}</label>
-                        <a href="public/sample_file/sample_category.csv" class="btn btn-info btn-block btn-md"><i class="dripicons-download"></i>  {{trans('file.Download')}}</a>
+                        <a href="sample_file/sample_category.csv" class="btn btn-info btn-block btn-md"><i class="dripicons-download"></i>  {{trans('file.Download')}}</a>
                     </div>
                 </div>
             </div>
@@ -197,8 +197,8 @@
             {"data": "name"},
             {"data": "parent_id"},
             {"data": "number_of_product"},
-            {"data": "stock_qty"},
-            {"data": "stock_worth"},
+            // {"data": "stock_qty"},
+            // {"data": "stock_worth"},
             {"data": "options"},
         ],
         'language': {
@@ -214,7 +214,7 @@
         'columnDefs': [
             {
                 "orderable": false,
-                'targets': [0, 1, 3, 4, 5, 6, 7]
+                'targets': [0, 1, 3, 4, 5]
             },
             {
                 'render': function(data, type, row, meta){

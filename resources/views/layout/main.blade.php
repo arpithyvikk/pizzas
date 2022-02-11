@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" type="image/png" href="{{url('public/logo', $general_setting->site_logo)}}" />
+    <link rel="icon" type="image/png" href="{{url('logo', $general_setting->site_logo)}}" />
     <title>{{$general_setting->site_title}}</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -130,13 +130,13 @@
                   @if($print_barcode_active)
                   <li id="printBarcode-menu"><a href="{{route('product.printBarcode')}}">{{__('file.print_barcode')}}</a></li>
                   @endif
-                  @if($adjustment_active)
+                  {{-- @if($adjustment_active)
                     <li id="adjustment-list-menu"><a href="{{route('qty_adjustment.index')}}">{{trans('file.Adjustment List')}}</a></li>
                     <li id="adjustment-create-menu"><a href="{{route('qty_adjustment.create')}}">{{trans('file.Add Adjustment')}}</a></li>
                   @endif
                   @if($stock_count_active)
                     <li id="stock-count-menu"><a href="{{route('stock-count.index')}}">{{trans('file.Stock Count')}}</a></li>
-                  @endif
+                  @endif --}}
                 </ul>
               </li>
               @endif
@@ -175,7 +175,7 @@
                     ])->first();
               ?>
               @if($index_permission_active)
-              <li><a href="#pizza" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-circle"></i><span>{{trans('file.Pizza')}}</span></a>
+              <li><a href="#pizza" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-circle-o"></i><span>{{trans('file.Pizza')}}</span></a>
                 <ul id="pizza" class="collapse list-unstyled ">
                   <li id="pizza-list-menu"><a href="{{route('pizzas.index')}}">{{trans('file.Pizza List')}}</a></li>
                   <?php
@@ -202,7 +202,7 @@
                     ])->first();
               ?>
               @if($index_permission_active)
-              <li><a href="#order" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-circle"></i><span>Orders</span></a>
+              <li><a href="#order" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-square-o"></i><span>Orders</span></a>
                 <ul id="order" class="collapse list-unstyled ">
                   <li id="order-list-menu"><a href="{{route('orders.index')}}">Order List</a></li>
                   <?php
@@ -220,7 +220,7 @@
               </li>
               @endif
               
-              <?php
+              {{-- <?php
                 $sale_index_permission = DB::table('permissions')->where('name', 'sales-index')->first();
                 $sale_index_permission_active = DB::table('role_has_permissions')->where([
                         ['permission_id', $sale_index_permission->id],
@@ -274,7 +274,7 @@
                   @endif
                 </ul>
               </li>
-              @endif
+              @endif --}}
 
               {{-- <?php
                 $index_permission = DB::table('permissions')->where('name', 'expenses-index')->first();
@@ -351,7 +351,7 @@
               </li>
               @endif --}}
 
-              <?php
+              {{-- <?php
                 $sale_return_index_permission = DB::table('permissions')->where('name', 'returns-index')->first();
 
                 $sale_return_index_permission_active = DB::table('role_has_permissions')->where([
@@ -377,7 +377,7 @@
                   @endif
                 </ul>
               </li>
-              @endif
+              @endif --}}
               {{-- <?php
                 $index_permission = DB::table('permissions')->where('name', 'account-index')->first();
                 $index_permission_active = DB::table('role_has_permissions')->where([
@@ -423,7 +423,7 @@
                 </ul>
               </li>
               @endif --}}
-              <?php
+              {{-- <?php
                 $department = DB::table('permissions')->where('name', 'department')->first();
                 $department_active = DB::table('role_has_permissions')->where([
                         ['permission_id', $department->id],
@@ -464,7 +464,7 @@
                   <li id="holiday-menu"><a href="{{route('holidays.index')}}">{{trans('file.Holiday')}}</a></li>
                 </ul>
               </li>
-              @endif
+              @endif --}}
 
               <?php
                   $user_index_permission_active = DB::table('permissions')
@@ -525,7 +525,7 @@
                   @endif
                   @endif --}}
 
-                  @if($biller_index_permission_active)
+                  {{-- @if($biller_index_permission_active)
                   <li id="biller-list-menu"><a href="{{route('biller.index')}}">{{trans('file.Biller List')}}</a></li>
                   <?php
                     $biller_add_permission = DB::table('permissions')->where('name', 'billers-add')->first();
@@ -551,7 +551,7 @@
                   @if($supplier_add_permission_active)
                   <li id="supplier-create-menu"><a href="{{route('supplier.create')}}">{{trans('file.Add Supplier')}}</a></li>
                   @endif
-                  @endif
+                  @endif --}}
                 </ul>
               </li>
               @endif
@@ -647,7 +647,7 @@
               @if($profit_loss_active || $best_seller_active || $warehouse_report_active || $warehouse_stock_report_active || $product_report_active || $daily_sale_active || $monthly_sale_active || $daily_purchase_active || $monthly_purchase_active || $purchase_report_active || $sale_report_active || $payment_report_active || $product_qty_alert_active || $user_report_active || $customer_report_active || $supplier_report_active || $due_report_active)
               <li><a href="#report" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-document-remove"></i><span>{{trans('file.Reports')}}</span></a>
                 <ul id="report" class="collapse list-unstyled ">
-                  @if($profit_loss_active)
+                  {{-- @if($profit_loss_active)
                   <li id="profit-loss-report-menu">
                     {!! Form::open(['route' => 'report.profitLoss', 'method' => 'post', 'id' => 'profitLoss-report-form']) !!}
                     <input type="hidden" name="start_date" value="{{date('Y-m').'-'.'01'}}" />
@@ -660,7 +660,7 @@
                   <li id="best-seller-report-menu">
                     <a href="{{url('report/best_seller')}}">{{trans('file.Best Seller')}}</a>
                   </li>
-                  @endif
+                  @endif --}}
                   @if($product_report_active)
                   <li id="product-report-menu">
                     {!! Form::open(['route' => 'report.product', 'method' => 'get', 'id' => 'product-report-form']) !!}
@@ -671,7 +671,7 @@
                     {!! Form::close() !!}
                   </li>
                   @endif
-                  @if($daily_sale_active)
+                  {{-- @if($daily_sale_active)
                   <li id="daily-sale-report-menu">
                     <a href="{{url('report/daily_sale/'.date('Y').'/'.date('m'))}}">{{trans('file.Daily Sale')}}</a>
                   </li>
@@ -709,7 +709,7 @@
                     <a id="payment-report-link" href="">{{trans('file.Payment Report')}}</a>
                     {!! Form::close() !!}
                   </li>
-                  @endif
+                  @endif --}}
                   @if($purchase_report_active)
                   <li id="purchase-report-menu">
                     {!! Form::open(['route' => 'report.purchase', 'method' => 'post', 'id' => 'purchase-report-form']) !!}
@@ -725,11 +725,11 @@
                     <a id="warehouse-report-link" href="">{{trans('file.Warehouse Report')}}</a>
                   </li>
                   @endif
-                  @if($warehouse_stock_report_active)
+                  {{-- @if($warehouse_stock_report_active)
                   <li id="warehouse-stock-report-menu">
                     <a href="{{route('report.warehouseStock')}}">{{trans('file.Warehouse Stock Chart')}}</a>
                   </li>
-                  @endif
+                  @endif --}}
                   @if($product_qty_alert_active)
                   <li id="qtyAlert-report-menu">
                     <a href="{{route('report.qtyAlert')}}">{{trans('file.Product Quantity Alert')}}</a>
@@ -740,6 +740,9 @@
                     <a id="user-report-link" href="">{{trans('file.User Report')}}</a>
                   </li>
                   @endif
+
+{{-- 
+
                   @if($customer_report_active)
                   <li id="customer-report-menu">
                     <a id="customer-report-link" href="">{{trans('file.Customer Report')}}</a>
@@ -758,7 +761,7 @@
                     <a id="due-report-link" href="">{{trans('file.Due Report')}}</a>
                     {!! Form::close() !!}
                   </li>
-                  @endif
+                  @endif --}}
                 </ul>
               </li>
               @endif
@@ -859,40 +862,40 @@
                   @if($role->id <= 2)
                   <li id="role-menu"><a href="{{route('role.index')}}">{{trans('file.Role Permission')}}</a></li>
                   @endif
-                  @if($send_notification_permission_active)
+                  {{-- @if($send_notification_permission_active)
                   <li id="notification-menu">
                     <a href="" id="send-notification">{{trans('file.Send Notification')}}</a>
                   </li>
-                  @endif
+                  @endif --}}
                   @if($warehouse_permission_active)
                   <li id="warehouse-menu"><a href="{{route('warehouse.index')}}">{{trans('file.Warehouse')}}</a></li>
                   @endif
-                  @if($customer_group_permission_active)
+                  {{-- @if($customer_group_permission_active)
                   <li id="customer-group-menu"><a href="{{route('customer_group.index')}}">{{trans('file.Customer Group')}}</a></li>
                   @endif
                   @if($brand_permission_active)
                   <li id="brand-menu"><a href="{{route('brand.index')}}">{{trans('file.Brand')}}</a></li>
-                  @endif
+                  @endif --}}
                   @if($unit_permission_active)
                   <li id="unit-menu"><a href="{{route('unit.index')}}">{{trans('file.Unit')}}</a></li>
                   @endif
-                  @if($currency_permission_active)
+                  {{-- @if($currency_permission_active)
                   <li id="currency-menu"><a href="{{route('currency.index')}}">{{trans('file.Currency')}}</a></li>
                   @endif
                   @if($tax_permission_active)
                   <li id="tax-menu"><a href="{{route('tax.index')}}">{{trans('file.Tax')}}</a></li>
-                  @endif
+                  @endif --}}
                   <li id="user-menu"><a href="{{route('user.profile', ['id' => Auth::id()])}}">{{trans('file.User Profile')}}</a></li>
-                  @if($create_sms_permission_active)
+                  {{--@if($create_sms_permission_active)
                   <li id="create-sms-menu"><a href="{{route('setting.createSms')}}">{{trans('file.Create SMS')}}</a></li>
-                  @endif
+                  @endif --}}
                   @if($backup_database_permission_active)
                   <li><a href="{{route('setting.backup')}}">{{trans('file.Backup Database')}}</a></li>
                   @endif
                   @if($general_setting_permission_active)
                   <li id="general-setting-menu"><a href="{{route('setting.general')}}">{{trans('file.General Setting')}}</a></li>
                   @endif
-                  @if($mail_setting_permission_active)
+                  {{-- @if($mail_setting_permission_active)
                   <li id="mail-setting-menu"><a href="{{route('setting.mail')}}">{{trans('file.Mail Setting')}}</a></li>
                   @endif
                   @if($reward_point_setting_permission_active)
@@ -906,7 +909,7 @@
                   @endif
                   @if($hrm_setting_permission_active)
                   <li id="hrm-setting-menu"><a href="{{route('setting.hrm')}}"> {{trans('file.HRM Setting')}}</a></li>
-                  @endif
+                  @endif --}}
                 </ul>
               </li>
             </ul>
@@ -921,7 +924,9 @@
               <a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-bars"> </i></a>
               <span class="brand-big">
                 @if($general_setting->site_logo)
-                <a href="{{url('/')}}"><img src="{{url('public/logo', $general_setting->site_logo)}}" width="115"></a>
+                {{-- <a href="{{url('/')}}"><img src="{{url('public/logo', $general_setting->site_logo)}}" width="115"></a> --}}
+
+                <a href="{{url('/')}}"><img src="{{url('logo', $general_setting->site_logo)}}" width="115"></a>
                 @else
                   <a href="{{url('/')}}"><h1 class="d-inline">{{$general_setting->site_title}}</h1></a>
                 @endif
@@ -1030,7 +1035,7 @@
                 </li>
                 @if(Auth::user()->role_id != 5)
                 <li class="nav-item">
-                    <a class="dropdown-item" href="{{ url('public/read_me') }}" target="_blank" data-toggle="tooltip" title="{{__('Help')}}"><i class="dripicons-information"></i></a>
+                    <a class="dropdown-item" href="{{ url('read_me') }}" target="_blank" data-toggle="tooltip" title="{{__('Help')}}"><i class="dripicons-information"></i></a>
                 </li>
                 @endif
                 <li class="nav-item">

@@ -177,7 +177,7 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 
 	//for orrders
 	Route::post('orders/order-data', 'OrderController@orderData')->name('order.data');
-	Route::get('orders/product_order/{id}','OrderController@productOrderData');
+	Route::get('orders/product_order/{order_date}','OrderController@productOrderData');
 	Route::resource('orders', 'OrderController');
 
 

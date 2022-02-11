@@ -10,9 +10,9 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header mt-2">
-                <h3 class="text-center">Pizza List</h3>
+                <h3 class="text-center">order List</h3>
             </div>
-            {!! Form::open(['route' => 'pizzas.index', 'method' => 'get']) !!}
+            {!! Form::open(['route' => 'orders.index', 'method' => 'get']) !!}
             <div class="row mb-3">
                 <div class="col-md-4 offset-md-2 mt-3">
                     <div class="form-group row">
@@ -35,34 +35,26 @@
             </div>
             {!! Form::close() !!}
         </div>
-        @if(in_array("pizzas-add", $all_permission))
-            <a href="{{route('pizzas.create')}}" class="btn btn-info"><i class="dripicons-plus"></i> Add Pizza</a>&nbsp;
-            <a href="{{url('pizzas/pizza_by_csv')}}" class="btn btn-primary"><i class="dripicons-copy"></i> Import Pizza</a>
+        @if(in_array("orders-add", $all_permission))
+            <a href="{{route('orders.create')}}" class="btn btn-info"><i class="dripicons-plus"></i> Add order</a>&nbsp;
+            <a href="{{url('orders/order_by_csv')}}" class="btn btn-primary"><i class="dripicons-copy"></i> Import order</a>
         @endif
     </div>
     <div class="table-responsive">
-        <table id="pizza-table" class="table pizza-list" style="width: 100%">
+        <table id="order-table" class="table order-list" style="width: 100%">
             <thead>
                 <tr>
                     <th class="not-exported"></th>
                     <th>Date</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Size</th>
-                    <th>Crust Type</th>
-                    <th>Price</th>
                     <th>No of items</th>
-                    <th>Note</th>
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
             </thead>
-
-            
         </table>
     </div>
 </section>
 
-<div id="pizza-details" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
+<div id="order-details" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
     <div role="document" class="modal-dialog">
       <div class="modal-content">
         <div class="container mt-3 pb-2 border-bottom">
@@ -77,13 +69,13 @@
                     <h3 id="exampleModalLabel" class="modal-title text-center container-fluid">{{$general_setting->site_title}}</h3>
                 </div>
                 <div class="col-md-12 text-center">
-                    <i style="font-size: 15px;">Pizza Details</i>
+                    <i style="font-size: 15px;">Order Details</i>
                 </div>
             </div>
         </div>
-            <div id="pizza-content" class="modal-body"></div>
+            <div id="order-content" class="modal-body"></div>
             <br>
-            <table class="table table-bordered product-pizza-list">
+            <table class="table table-bordered product-order-list">
                 <thead>
                     <th>#</th>
                     <th>Name</th>
@@ -92,7 +84,7 @@
                 <tbody>
                 </tbody>
             </table>
-            <div id="pizza-footer" class="modal-body"></div>
+            <div id="order-footer" class="modal-body"></div>
       </div>
     </div>
 </div>
@@ -118,14 +110,14 @@
 
     $('.selectpicker').selectpicker('refresh');
 
-    $("ul#pizza").siblings('a').attr('aria-expanded','true');
-    $("ul#pizza").addClass("show");
-    $("ul#pizza #pizza-list-menu").addClass("active");
+    $("ul#order").siblings('a').attr('aria-expanded','true');
+    $("ul#order").addClass("show");
+    $("ul#order #order-list-menu").addClass("active");
 
     var public_key = <?php echo json_encode($lims_pos_setting_data->stripe_public_key) ?>;
     var all_permission = <?php echo json_encode($all_permission) ?>;
 
-    var pizza_id = [];
+    var order_id = [];
     var user_verified = <?php echo json_encode(env('USER_VERIFIED')) ?>;
 
     $.ajaxSetup({
@@ -142,18 +134,18 @@
     }
 
    
-    $(document).on("click", "tr.pizza-link td:not(:first-child, :last-child)", function(){
-        var pizza = $(this).parent().data('pizza');
-        pizzaDetails(pizza);
+    $(document).on("click", "tr.order-link td:not(:first-child, :last-child)", function(){
+        var order = $(this).parent().data('order');
+        orderDetails(order);
     });
 
     $(document).on("click", ".view", function(){
-        var pizza = $(this).parent().parent().parent().parent().parent().data('pizza');
-        pizzaDetails(pizza);
+        var order = $(this).parent().parent().parent().parent().parent().data('order');
+        orderDetails(order);
     });
 
     $("#print-btn").on("click", function(){
-        var divContents = document.getElementById("pizza-details").innerHTML;
+        var divContents = document.getElementById("order-details").innerHTML;
         var a = window.open('');
         a.document.write('<html>');
         a.document.write('<head><style>body{font-family: sans-serif;line-height: 1.15;-webkit-text-size-adjust: 100%;}.d-print-none{display:none}.text-center{text-align:center}.row{width:100%;margin-right: -15px;margin-left: -15px;}.col-md-12{width:100%;display:block;padding: 5px 15px;}.col-md-6{width: 50%;float:left;padding: 5px 15px;}table{width:100%;margin-top:30px;}th{text-aligh:left;}td{padding:10px}table, th, td{border: 1px solid black; border-collapse: collapse;}</style><style>@media print {.modal-dialog { max-width: 1000px;} }</style></head>');
@@ -165,23 +157,23 @@
         a.print();
     });
 
-    $(document).on("click", "table.pizza-list tbody .add-payment", function(event) {
+    $(document).on("click", "table.order-list tbody .add-payment", function(event) {
         $("#cheque").hide();
         $(".card-element").hide();
         $('select[name="paid_by_id"]').val(1);
         rowindex = $(this).closest('tr').index();
-        var pizza_id = $(this).data('id').toString();
-        var balance = $('table.pizza-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(8)').text();
+        var order_id = $(this).data('id').toString();
+        var balance = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('td:nth-child(8)').text();
         balance = parseFloat(balance.replace(/,/g, ''));
         $('input[name="amount"]').val(balance);
         $('input[name="balance"]').val(balance);
         $('input[name="paying_amount"]').val(balance);
-        $('input[name="pizza_id"]').val(pizza_id);
+        $('input[name="order_id"]').val(order_id);
     });
 
-    $(document).on("click", "table.pizza-list tbody .get-payment", function(event) {
+    $(document).on("click", "table.order-list tbody .get-payment", function(event) {
         var id = $(this).data('id').toString();
-        $.get('pizzas/getpayment/' + id, function(data) {
+        $.get('orders/getpayment/' + id, function(data) {
             $(".payment-list tbody").remove();
             var newBody = $("<tbody>");
             payment_date  = data[0];
@@ -323,11 +315,11 @@
         var starting_date = $("input[name=starting_date]").val();
         var ending_date = $("input[name=ending_date]").val();
         var warehouse_id = $("#warehouse_id").val();
-        $('#pizza-table').DataTable( {
+        $('#order-table').DataTable( {
             "processing": true,
             "serverSide": true,
             "ajax":{
-                url:"pizzas/pizza-data",
+                url:"orders/order-data",
                 data:{
                     all_permission: all_permission,
                     starting_date: starting_date,
@@ -341,23 +333,17 @@
                 }*/
             },
             "createdRow": function( row, data, dataIndex ) {
-                $(row).addClass('pizza-link');
-                $(row).attr('data-pizza', data['pizza']);
+                $(row).addClass('order-link');
+                $(row).attr('data-order', data['order']);
             },
             "columns": [
                 {"data": "key"},
-                {"data": "date"},
-                {"data": "image"},
-                {"data": "name"},
-                {"data": "size"},
-                {"data": "crust_type"},
-                {"data": "price"},
-                {"data": "total_item"},
-                {"data": "note"},
+                {"data": "order_date"},
+                {"data": "no_of_item"},
                 {"data": "options"},
             ],
             'language': {
-                /*'searchPlaceholder': "{{trans('file.Type date or pizza reference...')}}",*/
+                /*'searchPlaceholder': "{{trans('file.Type date or order reference...')}}",*/
                 'lengthMenu': '_MENU_ {{trans("file.records per page")}}',
                  "info":      '<small>{{trans("file.Showing")}} _START_ - _END_ (_TOTAL_)</small>',
                 "search":  '{{trans("file.Search")}}',
@@ -370,7 +356,7 @@
             'columnDefs': [
                 {
                     "orderable": false,
-                    'targets': [0,8,9]
+                    'targets': [0]
                 },
                 {
                     'render': function(data, type, row, meta){
@@ -438,19 +424,19 @@
                     className: 'buttons-delete',
                     action: function ( e, dt, node, config ) {
                         if(user_verified == '1') {
-                            pizza_id.length = 0;
+                            order_id.length = 0;
                             $(':checkbox:checked').each(function(i){
                                 if(i){
-                                    var pizza = $(this).closest('tr').data('pizza');
-                                    pizza_id[i-1] = pizza[1];
+                                    var order = $(this).closest('tr').data('order');
+                                    order_id[i-1] = order[1];
                                 }
                             });
-                            if(pizza_id.length && confirm("Are you sure want to delete?")) {
+                            if(order_id.length && confirm("Are you sure want to delete?")) {
                                 $.ajax({
                                     type:'POST',
-                                    url:'pizzas/deletebyselection',
+                                    url:'orders/deletebyselection',
                                     data:{
-                                        pizzaIdArray: pizza_id
+                                        orderIdArray: order_id
                                     },
                                     success:function(data) {
                                         alert(data);
@@ -459,7 +445,7 @@
                                     }
                                 });
                             }
-                            else if(!pizza_id.length)
+                            else if(!order_id.length)
                                 alert('Nothing is selected!');
                         }
                         else
@@ -484,57 +470,45 @@
         if (dt_selector.rows( '.selected' ).any() && is_calling_first) {
             var rows = dt_selector.rows( '.selected' ).indexes();
 
-            $( dt_selector.column( 5 ).footer() ).html(dt_selector.cells( rows, 5, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 6 ).footer() ).html(dt_selector.cells( rows, 6, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 7 ).footer() ).html(dt_selector.cells( rows, 7, { page: 'current' } ).data().sum().toFixed(2));
+            $( dt_selector.column( 1 ).footer() ).html(dt_selector.cells( rows, 1, { page: 'current' } ).data().sum().toFixed(2));
+            $( dt_selector.column( 2 ).footer() ).html(dt_selector.cells( rows, 2, { page: 'current' } ).data().sum().toFixed(2));
+            $( dt_selector.column( 3 ).footer() ).html(dt_selector.cells( rows, 3, { page: 'current' } ).data().sum().toFixed(2));
         }
         else {
-            $( dt_selector.column( 5 ).footer() ).html(dt_selector.column( 5, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 6 ).footer() ).html(dt_selector.column( 6, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 7 ).footer() ).html(dt_selector.column( 7, {page:'current'} ).data().sum().toFixed(2));
+            $( dt_selector.column( 1 ).footer() ).html(dt_selector.column( 1, {page:'current'} ).data().sum().toFixed(2));
+            $( dt_selector.column( 2 ).footer() ).html(dt_selector.column( 2, {page:'current'} ).data().sum().toFixed(2));
+            $( dt_selector.column( 3 ).footer() ).html(dt_selector.column( 3, {page:'current'} ).data().sum().toFixed(2));
         }
     }
 
-    function pizzaDetails(pizza){
-        
-        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+pizza[0]+'<br><br><strong>Name: </strong>'+pizza[5]+'<br><strong>Size: </strong>'+pizza[6]+'<br><strong>Crust Type: </strong>'+pizza[7]+'<br><strong>Price: </strong>'+pizza[8];
-
-        $.get('pizzas/product_pizza/' + pizza[1], function(data){
-            $(".product-pizza-list tbody").remove();
-            var product_id = data[0];
+    function orderDetails(order){
+        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+order[2];
+        $.get('orders/product_order/' + order[2], function(data){
+            $(".product-order-list tbody").remove();
+            var order_date = data[0];
+            var name = data[0];
             var qty = data[1];
-            var unit_name = data[2];
-            // var unit_code = data[2];
-            // var tax = data[3];
-            // var tax_rate = data[4];
-            // var discount = data[5];
-            // var subtotal = data[6];
-            // var batch_no = data[7];
             var newBody = $("<tbody>");
-            $.each(product_id, function(index) {
+                console.log(data);
+            $.each(order_date, function(index) {
                 var newRow = $("<tr>");
                 var cols = '';
                 cols += '<td><strong>' + (index+1) + '</strong></td>';
-                cols += '<td>' + product_id[index] + '</td>';
-                cols += '<td>' + qty[index] + ' ' + unit_name[index] + '</td>';
-                // cols += '<td>' + qty[index] + ' ' + unit_code[index] + '</td>';
-                // cols += '<td>' + (subtotal[index] / qty[index]) + '</td>';
-                // cols += '<td>' + tax[index] + '(' + tax_rate[index] + '%)' + '</td>';
-                // cols += '<td>' + discount[index] + '</td>';
-                // cols += '<td>' + subtotal[index] + '</td>';
+                cols += '<td>' + name[index] + '</td>';
+                cols += '<td>' + qty[index] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
             });
 
             
-             $("table.product-pizza-list").append(newBody);
+             $("table.product-order-list").append(newBody);
         });
 
-        var htmlfooter = '<p><strong>{{trans("file.Note")}}:</strong> '+pizza[2]+'</p><strong>{{trans("file.Created By")}}:</strong><br>'+pizza[3]+'<br>'+pizza[4];
+        var htmlfooter = '<p><strong>{{trans("file.Note")}}:</strong> '+order[2]+'</p><strong>{{trans("file.Created By")}}:</strong><br>'+order[3]+'<br>'+order[4];
 
-        $('#pizza-content').html(htmltext);
-        $('#pizza-footer').html(htmlfooter);
-        $('#pizza-details').modal('show');
+        $('#order-content').html(htmltext);
+        $('#order-footer').html(htmlfooter);
+        $('#order-details').modal('show');
     }
 
     $(document).on('submit', '.payment-form', function(e) {
@@ -554,7 +528,7 @@
         $('#edit-payment select[name="edit_paid_by_id"]').prop('disabled', false);
     });
 
-    if(all_permission.indexOf("pizzas-delete") == -1)
+    if(all_permission.indexOf("orders-delete") == -1)
         $('.buttons-delete').addClass('d-none');
 
 
