@@ -14,7 +14,7 @@
                         <form id="product-form">
                             <input type="hidden" name="id" value="{{$lims_product_data->id}}" />
                             <div class="row">
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{trans('file.Product Type')}} *</strong> </label>
                                         <div class="input-group">
@@ -27,7 +27,8 @@
                                             <input type="hidden" name="type_hidden" value="{{$lims_product_data->type}}">
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
+                                <input type="hidden" name="type_hidden" value="{{$lims_product_data->type}}">
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{trans('file.Product Name')}} *</strong> </label>
@@ -47,7 +48,7 @@
                                         <span class="validation-msg" id="code-error"></span>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{trans('file.Barcode Symbology')}} *</strong> </label>
                                         <div class="input-group">
@@ -118,8 +119,10 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
+                                </div> --}}
+                                <input type="hidden" name="barcode_symbology_hidden" value="{{$lims_product_data->barcode_symbology}}">
+
+                                {{-- <div class="col-md-4">
                                     <div class="form-group">
                                         <label>{{trans('file.Brand')}}</strong> </label>
                                         <div class="input-group">
@@ -131,7 +134,9 @@
                                           </select>
                                       </div>
                                     </div>
-                                </div>
+                                </div> --}}
+                                <input type="hidden" name="brand" value="{{ $lims_product_data->brand_id}}">
+
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <input type="hidden" name="category" value="{{$lims_product_data->category_id}}">
@@ -180,7 +185,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="cost" class="col-md-4">
+                                {{-- <div id="cost" class="col-md-4">
                                     <div class="form-group">
                                         <label>{{trans('file.Product Cost')}} *</strong> </label>
                                         <input type="number" name="cost" value="{{$lims_product_data->cost}}" required class="form-control" step="any">
@@ -196,14 +201,18 @@
                                     <div class="form-group">
                                         <input type="hidden" name="qty" value="{{ $lims_product_data->qty }}" class="form-control">
                                     </div>
-                                </div>
-                                <div id="alert-qty" class="col-md-4">
+                                </div> --}}
+                                <input type="hidden" name="cost" value="{{$lims_product_data->cost}}" required class="form-control" step="any">
+                                <input type="hidden" name="price" value="{{$lims_product_data->price}}" required class="form-control" step="any">
+                                <input type="hidden" name="qty" value="{{ $lims_product_data->qty }}" class="form-control">
+
+                                <div id="alert-qty" class="col-md-8">
                                     <div class="form-group">
                                         <label>{{trans('file.Alert Quantity')}}</strong> </label>
                                         <input type="number" name="alert_quantity" value="{{$lims_product_data->alert_quantity}}" class="form-control" step="any">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                {{-- <div class="col-md-4">
                                     <div class="form-group">
                                         <input type="hidden" name="tax" value="{{$lims_product_data->tax_id}}">
                                         <label>{{trans('file.product')}} {{trans('file.Tax')}}</strong> </label>
@@ -214,8 +223,10 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
+                                </div> --}}
+                                <input type="hidden" name="tax" value="{{$lims_product_data->tax_id}}">
+
+                                {{-- <div class="col-md-4">
                                     <div class="form-group">
                                         <input type="hidden" name="tax_method_id" value="{{$lims_product_data->tax_method}}">
                                         <label>{{trans('file.Tax Method')}}</strong> </label>
@@ -224,8 +235,10 @@
                                             <option value="2">{{trans('file.Inclusive')}}</option>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="col-md-4">
+                                </div> --}}
+                                <input type="hidden" name="tax_method_id" value="{{$lims_product_data->tax_method}}">
+
+                                {{-- <div class="col-md-4">
                                     <div class="form-group mt-3">
                                         @if($lims_product_data->featured)
                                             <input type="checkbox" name="featured" value="1" checked>
@@ -234,7 +247,7 @@
                                         @endif
                                         <label>{{trans('file.Featured')}}</label>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label>{{trans('file.Product Image')}}</strong> </label> <i class="dripicons-question" data-toggle="tooltip" title="{{trans('file.You can upload multiple image. Only .jpeg, .jpg, .png, .gif file can be uploaded. First image will be base image.')}}"></i>
@@ -274,7 +287,7 @@
                                         <textarea name="product_details" class="form-control" rows="5">{{str_replace('@', '"', $lims_product_data->product_details)}}</textarea>
                                     </div>
                                 </div>
-                                <div class="col-md-12 mt-2" id="diffPrice-option">
+                                {{-- <div class="col-md-12 mt-2" id="diffPrice-option">
                                     @if($lims_product_data->is_diffPrice)
                                         <h5><input name="is_diffPrice" type="checkbox" id="is-diffPrice" value="1" checked>&nbsp; {{trans('file.This product has different price for different warehouse')}}</h5>
                                     @else
@@ -391,10 +404,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
+                                
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="button" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-btn">
+                                        <input type="submit" value="{{trans('file.submit')}}" class="btn btn-primary" id="submit-btn">
                                     </div>
                                 </div>
                             </div>

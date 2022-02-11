@@ -73,8 +73,8 @@
                                 <div class="form-group mt-2">
                                     <strong>{{trans('file.Print')}}: </strong>&nbsp;
                                     <strong><input type="checkbox" name="name" checked /> {{trans('file.Product Name')}}</strong>&nbsp;
-                                    <strong><input type="checkbox" name="price" checked/> {{trans('file.Price')}}</strong>&nbsp;
-                                    <strong><input type="checkbox" name="promo_price"/> {{trans('file.Promotional Price')}}</strong>
+                                    {{-- <strong><input type="checkbox" name="price" checked/> {{trans('file.Price')}}</strong>&nbsp; --}}
+                                    {{-- <strong><input type="checkbox" name="promo_price"/> {{trans('file.Promotional Price')}}</strong> --}}
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
