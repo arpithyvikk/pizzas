@@ -160,7 +160,7 @@
                   ?>
                   @if($add_permission_active)
                   <li id="purchase-create-menu"><a href="{{route('purchases.create')}}">{{trans('file.Add Purchase')}}</a></li>
-                  <li id="purchase-import-menu"><a href="{{url('purchases/purchase_by_csv')}}">{{trans('file.Import Purchase By CSV')}}</a></li>
+                  {{-- <li id="purchase-import-menu"><a href="{{url('purchases/purchase_by_csv')}}">{{trans('file.Import Purchase By CSV')}}</a></li> --}}
                   @endif
                 </ul>
               </li>
@@ -187,7 +187,7 @@
                   ?>
                   @if($add_permission_active)
                   <li id="pizza-create-menu"><a href="{{route('pizzas.create')}}">{{trans('file.Add Pizza')}}</a></li>
-                  <li id="pizza-import-menu"><a href="{{url('pizzas/pizza_by_csv')}}">{{trans('file.Import Pizza By CSV')}}</a></li>
+                  {{-- <li id="pizza-import-menu"><a href="{{url('pizzas/pizza_by_csv')}}">{{trans('file.Import Pizza By CSV')}}</a></li> --}}
                   @endif
                 </ul>
               </li>

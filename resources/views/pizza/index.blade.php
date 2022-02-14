@@ -37,7 +37,7 @@
         </div>
         @if(in_array("pizzas-add", $all_permission))
             <a href="{{route('pizzas.create')}}" class="btn btn-info"><i class="dripicons-plus"></i> Add Pizza</a>&nbsp;
-            <a href="{{url('pizzas/pizza_by_csv')}}" class="btn btn-primary"><i class="dripicons-copy"></i> Import Pizza</a>
+            {{-- <a href="{{url('pizzas/pizza_by_csv')}}" class="btn btn-primary"><i class="dripicons-copy"></i> Import Pizza</a> --}}
         @endif
     </div>
     <div class="table-responsive">

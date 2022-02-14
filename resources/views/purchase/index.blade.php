@@ -53,7 +53,7 @@
         </div>
         @if(in_array("purchases-add", $all_permission))
             <a href="{{route('purchases.create')}}" class="btn btn-info"><i class="dripicons-plus"></i> {{trans('file.Add Purchase')}}</a>&nbsp;
-            <a href="{{url('purchases/purchase_by_csv')}}" class="btn btn-primary"><i class="dripicons-copy"></i> {{trans('file.Import Purchase')}}</a>
+            {{-- <a href="{{url('purchases/purchase_by_csv')}}" class="btn btn-primary"><i class="dripicons-copy"></i> {{trans('file.Import Purchase')}}</a> --}}
         @endif
     </div>
     <div class="table-responsive">
@@ -62,13 +62,13 @@
                 <tr>
                     <th class="not-exported"></th>
                     <th>{{trans('file.Date')}}</th>
-                    <th>{{trans('file.reference')}}</th>
-                    <th>{{trans('file.Supplier')}}</th>
-                    <th>{{trans('file.Purchase Status')}}</th>
-                    <th>{{trans('file.grand total')}}</th>
-                    <th>{{trans('file.Paid')}}</th>
-                    <th>{{trans('file.Due')}}</th>
-                    <th>{{trans('file.Payment Status')}}</th>
+                    <th>Name</th>
+                    {{-- <th>{{trans('file.Supplier')}}</th> --}}
+                    {{-- <th>{{trans('file.Purchase Status')}}</th> --}}
+                    {{-- <th>{{trans('file.grand total')}}</th> --}}
+                    {{-- <th>{{trans('file.Paid')}}</th> --}}
+                    {{-- <th>{{trans('file.Due')}}</th> --}}
+                    {{-- <th>{{trans('file.Payment Status')}}</th> --}}
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
             </thead>
@@ -78,12 +78,7 @@
                 <th>{{trans('file.Total')}}</th>
                 <th></th>
                 <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
+               
             </tfoot>
         </table>
     </div>
@@ -114,12 +109,7 @@
                 <thead>
                     <th>#</th>
                     <th>{{trans('file.product')}}</th>
-                    <th>{{trans('file.Batch No')}}</th>
                     <th>Qty</th>
-                    <th>{{trans('file.Unit Cost')}}</th>
-                    <th>{{trans('file.Tax')}}</th>
-                    <th>{{trans('file.Discount')}}</th>
-                    <th>{{trans('file.Subtotal')}}</th>
                 </thead>
                 <tbody>
                 </tbody>
@@ -423,7 +413,7 @@
                     $('select[name="edit_paid_by_id"]').val(1);
                 else if(paying_method[index] == 'Credit Card'){
                     $('select[name="edit_paid_by_id"]').val(3);
-                    $.getScript( "public/vendor/stripe/checkout.js" );
+                    $.getScript( "vendor/stripe/checkout.js" );
                     $(".card-element").show();
                     $("#edit-cheque").hide();
                     $('#edit-payment select[name="edit_paid_by_id"]').prop('disabled', true);
@@ -452,7 +442,7 @@
         $('input[name="cheque_no"]').attr('required', false);
         $(".payment-form").off("submit");
         if (id == 3) {
-            $.getScript( "public/vendor/stripe/checkout.js" );
+            $.getScript( "vendor/stripe/checkout.js" );
             $(".card-element").show();
             $("#cheque").hide();
         } else if (id == 4) {
@@ -487,7 +477,7 @@
         $(".payment-form").off("submit");
         if (id == 3) {
             $(".edit-btn").attr('data-clicked', true);
-            $.getScript( "public/vendor/stripe/checkout.js" );
+            $.getScript( "vendor/stripe/checkout.js" );
             $(".card-element").show();
             $("#edit-cheque").hide();
         } else if (id == 4) {
@@ -542,13 +532,13 @@
             "columns": [
                 {"data": "key"},
                 {"data": "date"},
-                {"data": "reference_no"},
-                {"data": "supplier"},
-                {"data": "purchase_status"},
-                {"data": "grand_total"},
-                {"data": "paid_amount"},
-                {"data": "due"},
-                {"data": "payment_status"},
+                {"data": "shop_name"},
+                // {"data": "supplier"},
+                // {"data": "purchase_status"},
+                // {"data": "grand_total"},
+                // {"data": "paid_amount"},
+                // {"data": "due"},
+                // {"data": "payment_status"},  
                 {"data": "options"},
             ],
             'language': {
@@ -565,7 +555,7 @@
             'columnDefs': [
                 {
                     "orderable": false,
-                    'targets': [0, 3, 4, 7, 8,9]
+                    'targets': [0,2,3]
                 },
                 {
                     'render': function(data, type, row, meta){
@@ -679,101 +669,55 @@
         if (dt_selector.rows( '.selected' ).any() && is_calling_first) {
             var rows = dt_selector.rows( '.selected' ).indexes();
 
-            $( dt_selector.column( 5 ).footer() ).html(dt_selector.cells( rows, 5, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 6 ).footer() ).html(dt_selector.cells( rows, 6, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 7 ).footer() ).html(dt_selector.cells( rows, 7, { page: 'current' } ).data().sum().toFixed(2));
+            $( dt_selector.column( 2 ).footer() ).html(dt_selector.cells( rows, 2, { page: 'current' } ).data().sum().toFixed(2));
+            $( dt_selector.column( 3 ).footer() ).html(dt_selector.cells( rows, 3, { page: 'current' } ).data().sum().toFixed(2));
+            
         }
         else {
-            $( dt_selector.column( 5 ).footer() ).html(dt_selector.column( 5, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 6 ).footer() ).html(dt_selector.column( 6, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 7 ).footer() ).html(dt_selector.column( 7, {page:'current'} ).data().sum().toFixed(2));
+            $( dt_selector.column( 2 ).footer() ).html(dt_selector.column( 2, {page:'current'} ).data().sum().toFixed(2));
+            $( dt_selector.column( 3 ).footer() ).html(dt_selector.column( 3, {page:'current'} ).data().sum().toFixed(2));
+            
         }
     }
 
     function purchaseDetails(purchase){
-        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+purchase[0]+'<br><strong>{{trans("file.reference")}}: </strong>'+purchase[1]+'<br><strong>{{trans("file.Purchase Status")}}: </strong>'+purchase[2]+'<br><br><div class="row"><div class="col-md-6"><strong>{{trans("file.From")}}:</strong><br>'+purchase[4]+'<br>'+purchase[5]+'<br>'+purchase[6]+'</div><div class="col-md-6"><div class="float-right"><strong>{{trans("file.To")}}:</strong><br>'+purchase[7]+'<br>'+purchase[8]+'<br>'+purchase[9]+'<br>'+purchase[10]+'<br>'+purchase[11]+'<br>'+purchase[12]+'</div></div></div>';
+        
+        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+purchase[0]+'<br>';
+        console.log(purchase);
 
-        $.get('purchases/product_purchase/' + purchase[3], function(data){
+        $.get('purchases/product_purchase/' + purchase[2], function(data){
             $(".product-purchase-list tbody").remove();
+
             var name_code = data[0];
             var qty = data[1];
-            var unit_code = data[2];
+            // var unit_code = data[0];
             var tax = data[3];
-            var tax_rate = data[4];
-            var discount = data[5];
-            var subtotal = data[6];
-            var batch_no = data[7];
+            // var tax_rate = data[4];
+            // var discount = data[5];
+            // var subtotal = data[6];
+            // var batch_no = data[7];
             var newBody = $("<tbody>");
             $.each(name_code, function(index) {
                 var newRow = $("<tr>");
                 var cols = '';
                 cols += '<td><strong>' + (index+1) + '</strong></td>';
                 cols += '<td>' + name_code[index] + '</td>';
-                cols += '<td>' + batch_no[index] + '</td>';
-                cols += '<td>' + qty[index] + ' ' + unit_code[index] + '</td>';
-                cols += '<td>' + (subtotal[index] / qty[index]) + '</td>';
-                cols += '<td>' + tax[index] + '(' + tax_rate[index] + '%)' + '</td>';
-                cols += '<td>' + discount[index] + '</td>';
-                cols += '<td>' + subtotal[index] + '</td>';
+                // cols += '<td>' + batch_no[index] + '</td>';
+                cols += '<td>' + qty[index] + '</td>';
+                // cols += '<td>' + (subtotal[index] / qty[index]) + '</td>';
+                // cols += '<td>' + tax[index] + '(' + tax_rate[index] + '%)' + '</td>';
+                // cols += '<td>' + discount[index] + '</td>';
+                // cols += '<td>' + subtotal[index] + '</td>';
                 newRow.append(cols);
                 newBody.append(newRow);
             });
 
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=5><strong>{{trans("file.Total")}}:</strong></td>';
-            cols += '<td>' + purchase[13] + '</td>';
-            cols += '<td>' + purchase[14] + '</td>';
-            cols += '<td>' + purchase[15] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Order Tax")}}:</strong></td>';
-            cols += '<td>' + purchase[16] + '(' + purchase[17] + '%)' + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Order Discount")}}:</strong></td>';
-            cols += '<td>' + purchase[18] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Shipping Cost")}}:</strong></td>';
-            cols += '<td>' + purchase[19] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.grand total")}}:</strong></td>';
-            cols += '<td>' + purchase[20] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Paid Amount")}}:</strong></td>';
-            cols += '<td>' + purchase[21] + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
-
-            var newRow = $("<tr>");
-            cols = '';
-            cols += '<td colspan=7><strong>{{trans("file.Due")}}:</strong></td>';
-            cols += '<td>' + (purchase[20] - purchase[21]) + '</td>';
-            newRow.append(cols);
-            newBody.append(newRow);
+           
 
              $("table.product-purchase-list").append(newBody);
         });
 
-        var htmlfooter = '<p><strong>{{trans("file.Note")}}:</strong> '+purchase[22]+'</p><strong>{{trans("file.Created By")}}:</strong><br>'+purchase[23]+'<br>'+purchase[24];
+        var htmlfooter = '<strong>{{trans("file.Created By")}}:</strong><br>'+purchase[22]+'<br>'+purchase[23];
 
         $('#purchase-content').html(htmltext);
         $('#purchase-footer').html(htmlfooter);

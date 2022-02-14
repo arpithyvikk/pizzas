@@ -89,7 +89,7 @@
 
                                                         $product_batch_data = \App\ProductBatch::select('batch_no', 'expired_date')->find($product_pizza->product_batch_id);
                                                     ?>
-                                                        <td>{{$product_data->name}} <button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button> </td>
+                                                        <td>{{$product_data->name}}  </td>
                                                         <td><input type="number" class="form-control qty" name="qty[]" value="{{$product_pizza->qty}}" step="any" required /></td>
                                                         <td>{{$p_units->unit_name}}</td>
                                                        
@@ -472,7 +472,7 @@ function productSearch(data) {
                     var newRow = $("<tr>");
                     var cols = '';
                     temp_unit_name = (data[6]).split(',');
-                    cols += '<td>' + data[0] + '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
+                    cols += '<td>' + data[0] + '</td>';
                     // cols += '<td>' + data[1] + '</td>';
                     cols += '<td><input type="number" class="form-control qty" name="qty[]" value="1" step="any" required/></td>';
                     cols += '<td>' + temp_unit_name[0] + ' </td>';

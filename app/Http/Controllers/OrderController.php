@@ -73,8 +73,9 @@ class OrderController extends Controller
             $lims_product_pizza_list = ProductPizza::all();
             $lims_pizza_list = Pizza::orderBy('name')->get();
             $lims_purchase_list = Purchase::all();
+            $lims_warehouse_list = Warehouse::orderBy('name')->get();
 
-            return view('order.create', compact('lims_product_list', 'lims_product_pizza_list', 'lims_pizza_list', 'lims_purchase_list'));
+            return view('order.create', compact('lims_warehouse_list','lims_product_list', 'lims_product_pizza_list', 'lims_pizza_list', 'lims_purchase_list'));
         } else {
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
         }

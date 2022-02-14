@@ -26,7 +26,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    {{-- <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Supplier')}}</label>
                                             <select name="supplier_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select supplier...">
@@ -35,10 +35,11 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> --}}
+                                    <input type="hidden" name="supplier_id" value="1">
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    {{-- <div class="col-md-6">
                                         <div class="form-group">
                                             <label>{{trans('file.Purchase Status')}}</label>
                                             <select name="status" class="form-control">
@@ -48,18 +49,9 @@
                                                 <option value="4">{{trans('file.Ordered')}}</option>
                                             </select>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>{{trans('file.Attach Document')}}</label> <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
-                                            <input type="file" name="document" class="form-control" >
-                                            @if($errors->has('extension'))
-                                                <span>
-                                                   <strong>{{ $errors->first('extension') }}</strong>
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
+                                    </div> --}}
+                                    <input type="hidden" name="status" value="1" class="form-control">
+                                   
                                     <div class="col-md-12 mt-3">
                                         <label>{{trans('file.Select Product')}}</label>
                                         <div class="search-box input-group">
@@ -79,97 +71,24 @@
                                                         <th>{{trans('file.Code')}}</th>
                                                         <th>{{trans('file.Quantity')}}</th>
                                                         <th class="recieved-product-qty d-none">{{trans('file.Recieved')}}</th>
-                                                        <th>{{trans('file.Batch No')}}</th>
-                                                        <th>{{trans('file.Expired Date')}}</th>
+                                                        <th></th>
+                                                        <th></th>
                                                         <th>{{trans('file.Net Unit Cost')}}</th>
-                                                        <th>{{trans('file.Discount')}}</th>
-                                                        <th>{{trans('file.Tax')}}</th>
-                                                        <th>{{trans('file.Subtotal')}}</th>
-                                                        <th><i class="dripicons-trash"></i></th>
+                                                        {{-- <th>{{trans('file.Discount')}}</th> --}}
+                                                        {{-- <th>{{trans('file.Tax')}}</th> --}}
+                                                        {{-- <th>{{trans('file.Subtotal')}}</th> --}}
+                                                        <th>Remove</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                 </tbody>
-                                                <tfoot class="tfoot active">
-                                                    <th colspan="2">{{trans('file.Total')}}</th>
-                                                    <th id="total-qty">0</th>
-                                                    <th class="recieved-product-qty d-none"></th>
-                                                    <th></th>
-                                                    <th></th>
-                                                    <th></th>
-                                                    <th id="total-discount">0.00</th>
-                                                    <th id="total-tax">0.00</th>
-                                                    <th id="total">0.00</th>
-                                                    <th><i class="dripicons-trash"></i></th>
-                                                </tfoot>
+                                                
                                             </table>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="total_qty" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="total_discount" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="total_tax" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="total_cost" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="item" />
-                                            <input type="hidden" name="order_tax" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="hidden" name="grand_total" />
-                                            <input type="hidden" name="paid_amount" value="0.00" />
-                                            <input type="hidden" name="payment_status" value="1" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mt-3">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>{{trans('file.Order Tax')}}</label>
-                                            <select class="form-control" name="order_tax_rate">
-                                                <option value="0">{{trans('file.No Tax')}}</option>
-                                                @foreach($lims_tax_list as $tax)
-                                                <option value="{{$tax->rate}}">{{$tax->name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>
-                                                <strong>{{trans('file.Discount')}}</strong>
-                                            </label>
-                                            <input type="number" name="order_discount" class="form-control" step="any" />
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>
-                                                <strong>{{trans('file.Shipping Cost')}}</strong>
-                                            </label>
-                                            <input type="number" name="shipping_cost" class="form-control" step="any" />
-                                        </div>
-                                    </div>
-                                </div>
+                               
+                              
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -189,28 +108,7 @@
             </div>
         </div>
     </div>
-    <div class="container-fluid">
-        <table class="table table-bordered table-condensed totals">
-            <td><strong>{{trans('file.Items')}}</strong>
-                <span class="pull-right" id="item">0.00</span>
-            </td>
-            <td><strong>{{trans('file.Total')}}</strong>
-                <span class="pull-right" id="subtotal">0.00</span>
-            </td>
-            <td><strong>{{trans('file.Order Tax')}}</strong>
-                <span class="pull-right" id="order_tax">0.00</span>
-            </td>
-            <td><strong>{{trans('file.Order Discount')}}</strong>
-                <span class="pull-right" id="order_discount">0.00</span>
-            </td>
-            <td><strong>{{trans('file.Shipping Cost')}}</strong>
-                <span class="pull-right" id="shipping_cost">0.00</span>
-            </td>
-            <td><strong>{{trans('file.grand total')}}</strong>
-                <span class="pull-right" id="grand_total">0.00</span>
-            </td>
-        </table>
-    </div>
+ 
     <div id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
         <div role="document" class="modal-dialog">
             <div class="modal-content">
@@ -302,8 +200,8 @@
 
     $('[data-toggle="tooltip"]').tooltip();
 
-    $('select[name="status"]').on('change', function() {
-        if($('select[name="status"]').val() == 2){
+    $('input[name="status"]').on('change', function() {
+        if($('input[name="status"]').val() == 2){
             $(".recieved-product-qty").removeClass("d-none");
             $(".qty").each(function() {
                 rowindex = $(this).closest('tr').index();
@@ -311,7 +209,7 @@
             });
 
         }
-        else if(($('select[name="status"]').val() == 3) || ($('select[name="status"]').val() == 4)){
+        else if(($('input[name="status"]').val() == 3) || ($('input[name="status"]').val() == 4)){
             $(".recieved-product-qty").addClass("d-none");
             $(".recieved").each(function() {
                 $(this).val(0);
@@ -528,26 +426,24 @@
                     cols += '<td>' + data[0] + '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
                     cols += '<td>' + data[1] + '</td>';
                     cols += '<td><input type="number" class="form-control qty" name="qty[]" value="1" step="any" required/></td>';
-                    if($('select[name="status"]').val() == 1)
+                    if($('input[name="status"]').val() == 1)
                         cols += '<td class="recieved-product-qty d-none"><input type="number" class="form-control recieved" name="recieved[]" value="1" step="any"/></td>';
-                    else if($('select[name="status"]').val() == 2)
+                    else if($('input[name="status"]').val() == 2)
                         cols += '<td class="recieved-product-qty"><input type="number" class="form-control recieved" name="recieved[]" value="1" step="any"/></td>';
                     else
                         cols += '<td class="recieved-product-qty d-none"><input type="number" class="form-control recieved" name="recieved[]" value="0" step="any"/></td>';
                     if(data[10]) {
-                        cols += '<td><input type="text" class="form-control batch-no" name="batch_no[]" required/></td>';
-                        cols += '<td><input type="text" class="form-control expired-date" name="expired_date[]" required/></td>';
+                        cols += '<td><input type="hidden" class="form-control batch-no" name="batch_no[]" required/></td>';
+                        cols += '<td><input type="hidden" class="form-control expired-date" name="expired_date[]" required/></td>';
                     }
                     else {
-                        cols += '<td><input type="text" class="form-control batch-no" name="batch_no[]" disabled/></td>';
-                        cols += '<td><input type="text" class="form-control expired-date" name="expired_date[]" disabled/></td>';
+                        cols += '<td><input type="hidden" class="form-control batch-no" name="batch_no[]" disabled/></td>';
+                        cols += '<td><input type="hidden" class="form-control expired-date" name="expired_date[]" disabled/></td>';
                     }
 
-                    cols += '<td class="net_unit_cost"></td>';
-                    cols += '<td class="discount">0.00</td>';
-                    cols += '<td class="tax"></td>';
-                    cols += '<td class="sub-total"></td>';
-                    cols += '<td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>';
+                    cols += '<td>' + data[6] + '</td>';
+
+                    cols += '<td><button type="button" class="ibtnDel btn btn-sm btn-danger"><i class="fa fa-trash"></i></button></td>';
                     cols += '<input type="hidden" class="product-code" name="product_code[]" value="' + data[1] + '"/>';
                     cols += '<input type="hidden" class="product-id" name="product_id[]" value="' + data[9] + '"/>';
                     cols += '<input type="hidden" class="purchase-unit" name="purchase_unit[]" value="' + temp_unit_name[0] + '"/>';
@@ -593,7 +489,7 @@
 
         $('#editModal').modal('hide');
         $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.qty').val(purchase_qty);
-        var status = $('select[name="status"]').val();
+        var status = $('input[name="status"]').val();
         if(status == '1' || status == '2' )
             $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.recieved').val(purchase_qty);
         calculateRowProductData(purchase_qty);
@@ -753,7 +649,7 @@
         e.preventDefault();
     }
 
-    else if($('select[name="status"]').val() != 1)
+    else if($('input[name="status"]').val() != 1)
     {
         flag = 0;
         $(".qty").each(function() {
