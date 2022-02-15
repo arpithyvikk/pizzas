@@ -26,7 +26,23 @@
                         </div>
                     </div>
                 </div>
-                <input type="hidden" id="warehouse_id" name="warehouse_id" value="1">
+                <div class="col-md-4 mt-3 @if(\Auth::user()->role_id > 2){{'d-none'}}@endif">
+                    <div class="form-group row">
+                        <label class="d-tc mt-2"><strong>{{trans('file.Choose Warehouse')}}</strong> &nbsp;</label>
+                        <div class="d-tc">
+                            <select id="warehouse_id" name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" >
+                                <option value="0">{{trans('file.All Warehouse')}}</option>
+                                @foreach($lims_warehouse_list as $warehouse)
+                                    @if($warehouse->id == $warehouse_id)
+                                        <option selected value="{{$warehouse->id}}">{{$warehouse->name}}</option>
+                                    @else
+                                        <option value="{{$warehouse->id}}">{{$warehouse->name}}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-md-2 mt-3">
                     <div class="form-group">
                         <button class="btn btn-primary" id="filter-btn" type="submit">{{trans('file.submit')}}</button>

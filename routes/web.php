@@ -178,6 +178,8 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 	//for orrders
 	Route::post('orders/order-data', 'OrderController@orderData')->name('order.data');
 	Route::get('orders/product_order/{order_date}','OrderController@productOrderData');
+	Route::get('orders/order_by_csv', 'OrderController@orderByCsv');
+	Route::post('importorder', 'OrderController@importOrder')->name('order.import');
 	Route::resource('orders', 'OrderController');
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Account;
+use App\Category;
 use App\Payment;
 use App\PaymentWithCheque;
 use App\PaymentWithCreditCard;
@@ -86,16 +87,27 @@ class OrderController extends Controller
         $columns = array(
             1 => 'created_at',
             2 => 'created_at',
-
         );
 
-        $totalData = Order::whereDate('created_at', '>=', $request->input('starting_date'))->whereDate('created_at', '<=', $request->input('ending_date'))->count();
+        $warehouse_id = $request->input('warehouse_id');
+
+        if(Auth::user()->role_id > 2 && config('staff_access') == 'own')
+            $totalData = Order::where('user_id', Auth::id())
+                        ->whereDate('created_at', '>=' ,$request->input('starting_date'))
+                        ->whereDate('created_at', '<=' ,$request->input('ending_date'))
+                        ->count();
+        elseif($warehouse_id != 0)
+            $totalData = Order::where('warehouse_id', $warehouse_id)->whereDate('created_at', '>=' ,$request->input('starting_date'))->whereDate('created_at', '<=' ,$request->input('ending_date'))->count();
+        else
+            $totalData = Order::whereDate('created_at', '>=', $request->input('starting_date'))->whereDate('created_at', '<=', $request->input('ending_date'))->count();
 
         $totalFiltered = $totalData;
+
         $limit = $totalData;
         $start = $request->input('start');
         $order = $columns[$request->input('order.0.column')];
         $dir = $request->input('order.0.dir');
+
         if ($request->input('length') != -1) {
             $limit = $request->input('length');
         } else {
@@ -105,13 +117,29 @@ class OrderController extends Controller
         $start = $request->input('start');
         
         if (empty($request->input('search.value'))) {
-            
-        $orders = Order::offset($start)
-            ->whereDate('created_at', '>=', $request->input('starting_date'))
-            ->whereDate('created_at', '<=', $request->input('ending_date'))
-            ->limit($limit)
-            ->orderBy($order, $dir)
-            ->get();
+            if(Auth::user()->role_id > 2 && config('staff_access') == 'own')
+                $orders = Order::offset($start)
+                            ->where('user_id', Auth::id())
+                            ->whereDate('created_at', '>=' ,$request->input('starting_date'))
+                            ->whereDate('created_at', '<=' ,$request->input('ending_date'))
+                            ->limit($limit)
+                            ->orderBy($order, $dir)
+                            ->get();
+            elseif($warehouse_id != 0)
+                $orders = Order::offset($start)
+                            ->where('warehouse_id', $warehouse_id)
+                            ->whereDate('created_at', '>=' ,$request->input('starting_date'))
+                            ->whereDate('created_at', '<=' ,$request->input('ending_date'))
+                            ->limit($limit)
+                            ->orderBy($order, $dir)
+                            ->get();
+            else
+            $orders = Order::offset($start)
+                ->whereDate('created_at', '>=', $request->input('starting_date'))
+                ->whereDate('created_at', '<=', $request->input('ending_date'))
+                ->limit($limit)
+                ->orderBy($order, $dir)
+                ->get();
         } 
         else 
         {
@@ -259,10 +287,11 @@ class OrderController extends Controller
     {
         $validator = $request->validate([
             'order_date' => 'required',
+            'warehouse_id' => 'required',
             'pizza_id' => 'required',
             'quantity' => 'required',
         ]);
-
+        
         $f_pizza_id = $request->pizza_id;
         $f_pizza_qty = $request->quantity;
 
@@ -275,11 +304,12 @@ class OrderController extends Controller
                 
         $form = json_encode($pizza_ary);
                 
-        // $order = new Order;
-        // $order->order_date = $request->order_date;
-        // $order->pizza_id = $form;
-        // $order->user_id = Auth::id();
-        // $order->save();
+        $order = new Order;
+        $order->order_date = $request->order_date;
+        $order->pizza_id = $form;
+        $order->warehouse_id = $request->warehouse_id;
+        $order->user_id = Auth::id();
+        $order->save();
 
         $pro_data = array();
         $product_items = Product::all();
@@ -302,7 +332,6 @@ class OrderController extends Controller
                     $products = Product::where('id',$product_pizza->product_id)->get();
                     foreach($products as $product)
                     {                   
-                        
                         $sale_units = Unit::where('id', $product->sale_unit_id)->first();
                         $purchase_units = Unit::where('id', $product->purchase_unit_id)->first();
                         $product_units = Unit::where('id', $product->unit_id)->first();
@@ -347,26 +376,37 @@ class OrderController extends Controller
                         
                         $pro_data[$product->id] += $qty;
                     }
-                }
+                } 
 
-                echo '<h1>DATA SAVED</h1><br>';
-            }
+            } 
         }
-        foreach($pro_data as $key => $value)
+        foreach($pro_data as $key => $value) 
         {   
-            if($value != 0)
+            if($value != 0) 
             {
                 $id = $key;
                 $p_data = Product::find($id);
                 $p_qty = $p_data->qty;
                 $total_qty = $p_qty - $value;
-                // $p_data->qty = $total_qty;
-                // $p_data->save();
+                $p_data->qty = $total_qty;
+                $p_data->save();
                 echo $total_qty.'<br>';
+
+                $warehouse_data = Product_Warehouse::where([
+                    ['product_id', '=' , $id],
+                    ['warehouse_id', '=' ,$request->warehouse_id]
+                ])->first();
+                $w_qty = $warehouse_data->qty;
+                $total_W_qty = $w_qty - $value;
+                $warehouse_data->qty = $total_W_qty;
+                $warehouse_data->save();
+                echo $total_W_qty.'<br>';
+
+                // return dd($warehouse_data->qty);
             }
         }
-        dd($pro_data);
-        // return redirect('orders')->with('message', 'Order added successfully');
+        
+        return redirect('orders')->with('message', 'Order added successfully');
     }
 
     public function show(Request $request)
@@ -431,4 +471,154 @@ class OrderController extends Controller
         $product[] = $lims_product_data->is_imei;
         return $product;
     }
+
+    public function orderByCsv()
+    {
+        $role = Role::find(Auth::user()->role_id);
+        if($role->hasPermissionTo('orders-add')){
+            $lims_warehouse_list = Warehouse::where('is_active', true)->get();
+            return view('order.import', compact('lims_warehouse_list'));
+        }
+        else
+            return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
+    }
+
+    public function importOrder(Request $request)
+    {   
+        //get file
+        $upload=$request->file('file');
+        $ext = pathinfo($upload->getClientOriginalName(), PATHINFO_EXTENSION);
+        if($ext != 'csv')
+            return redirect()->back()->with('message', 'Please upload a CSV file');
+
+        $filePath=$upload->getRealPath();
+        //open and read
+        $file=fopen($filePath, 'r');
+        $header= fgetcsv($file);
+        $escapedHeader=[];
+        //validate
+        foreach ($header as $key => $value) {
+            $lheader=strtolower($value);
+            $escapedItem=preg_replace('/[^a-z]/', '', $lheader);
+            array_push($escapedHeader, $escapedItem);
+        }
+
+        
+        $pizza_ary = array();
+        //looping through other columns
+        while($columns=fgetcsv($file))
+        {
+
+            foreach ($columns as $key => $value) {
+                $value=preg_replace('/\D/','',$value);
+            }
+            $data= array_combine($escapedHeader, $columns);
+
+            $lims_category_data = Category::where('name', '=', $data['category'])->first();
+
+            $category_id = $lims_category_data->id;
+
+            $p_name = $data['itemname'];
+
+            $pizza = Pizza::where('name', '=', $p_name)->first();
+
+            //order insert start
+            
+
+            $pizza_ary[$pizza->id] = $data['qty'];
+
+            $pro_data = array();
+            //order insert end
+
+            $product_orders = ProductPizza::where('pizza_id', '=', $pizza->id)->get();
+                foreach($product_orders as $product_pizza)
+                {
+                    $products = Product::where('id',$product_pizza->product_id)->get();
+                    foreach($products as $product)
+                    {                   
+                        $sale_units = Unit::where('id', $product->sale_unit_id)->first();
+                        $purchase_units = Unit::where('id', $product->purchase_unit_id)->first();
+                        $product_units = Unit::where('id', $product->unit_id)->first();
+
+                        if($sale_units->id == $product_units->id && $sale_units->id == $purchase_units->id)
+                        {
+                            $qty = $product_pizza->qty * $data['qty'];
+                            $total = $product->qty - $qty;
+                            // echo $product->name.' ('.$product->id.'-'.$qty.' '.$sale_units->unit_code.')'.' : ';
+                            // echo ' = '.$total.' '.$sale_units->unit_code.' (s=u=p)<br>';
+                        }
+
+                        else if($sale_units->id == $product_units->id && $sale_units->id != $purchase_units->id)
+                        {
+                            $qty = $product_pizza->qty * $data['qty'];
+                            $cal = $product->qty - $qty;
+                            $total = $cal / $purchase_units->operation_value;
+                            $a =  strtok($total, '.');
+                            $b = $a * $purchase_units->operation_value;
+                            $c = $cal - $b;
+                            // echo $product->name.' ('.$qty.' '.$sale_units->unit_code.')'.' : ';
+                            // echo $a. '.' .$c.$purchase_units->unit_code.' (s==u, s!=p)<br>';
+                        }
+
+                        else if($sale_units->id != $product_units->id && $sale_units->id != $purchase_units->id && $product_units->id == $purchase_units->id)
+                        {
+                            $cal = $product_pizza->qty * $data['qty'];
+                            $qty = $cal / $sale_units->operation_value;
+                            $total = $product->qty - $qty;
+                            // echo $product->name.' ('.$qty.' '.$product_units->unit_code.')'.' : ';
+                            // echo $total .' '.$purchase_units->unit_name.'(s!=u, s!=p, u==p)<br>';
+                        }
+
+                        else{
+                            $s = $product_pizza->qty * $data['qty'];
+                            $qty = $s * $sale_units->operation_value;
+                            $p = $product->qty - $qty;
+                            $q = $p / $purchase_units->operation_value;
+                            // echo $product->name.' ('.$s.' '.$sale_units->unit_code.')'.' : ';
+                            // echo $q . ' ' .$purchase_units->unit_code .' (s!=u!=p)<br>';
+                        }
+                        
+                        $pro_data[$product->id] = $qty;
+                    }
+                } 
+
+        }
+
+        $form = json_encode($pizza_ary);
+
+        $order = new Order;
+        $order->order_date = $request->order_date;
+        $order->pizza_id = $form;
+        $order->warehouse_id = $request->warehouse_id;
+        $order->user_id = Auth::id();
+        $order->save();
+
+        foreach($pro_data as $key => $value) 
+        {   
+            if($value != 0) 
+            {
+                $id = $key;
+                $p_data = Product::find($id);
+                $p_qty = $p_data->qty;
+                $total_qty = $p_qty - $value;
+                $p_data->qty = $total_qty;
+                $p_data->save();
+                echo $total_qty.'<br>';
+
+                $warehouse_data = Product_Warehouse::where([
+                    ['product_id', '=' , $id],
+                    ['warehouse_id', '=' ,$request->warehouse_id]
+                ])->first();
+                $w_qty = $warehouse_data->qty;
+                $total_W_qty = $w_qty - $value;
+                $warehouse_data->qty = $total_W_qty;
+                $warehouse_data->save();
+                echo $total_W_qty.'<br>';
+
+                // return dd($warehouse_data->qty);
+            }
+        }
+         return redirect('orders')->with('import_message', 'Order imported successfully');
+    }
+
 }

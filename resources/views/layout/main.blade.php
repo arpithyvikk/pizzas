@@ -214,7 +214,7 @@
                   ?>
                   @if($add_permission_active)
                   <li id="order-create-menu"><a href="{{route('orders.create')}}">Add order</a></li>
-                  <li id="order-import-menu"><a href="{{url('orders/order_by_csv')}}">{{trans('file.Import order By CSV')}}</a></li>
+                  <li id="order-import-menu"><a href="{{url('orders/order_by_csv')}}">Import order By CSV</a></li>
                   @endif
                 </ul>
               </li>

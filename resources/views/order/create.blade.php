@@ -11,7 +11,7 @@
     <div class="container-fluid">
         <div class="card">
             <div class="card-header mt-2">
-                <h3 class="text-center">Order List</h3>
+                <h3 class="text-center">Add Order</h3>
             </div>
             <div class="row mb-3">
                 <div class="col-md-4 offset-md-1 mt-3">
@@ -22,13 +22,13 @@
                             $old_date_timestamp = strtotime($date);
                             $new_date = date('Y-m-d', $old_date_timestamp);   
                         @endphp
-                                                <label>Order Date</strong> </label>
+                        <label><strong> Date</strong> </label>
                         <input type="date" class="form-control" name="order_date" value="{{$new_date}}" required />
                     </div>
                 </div>
                 <div class="col-md-4 offset-md-1 mt-3">
                     <div class="form-group">
-                        <label>Select Shop </strong> </label>
+                        <label><strong> Select Shop </strong> </label>
                         <div class="input-group">
                           <select name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select Brand...">
                             @foreach($lims_warehouse_list as $shop)

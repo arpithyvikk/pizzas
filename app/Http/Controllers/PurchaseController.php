@@ -85,9 +85,12 @@ class PurchaseController extends Controller
             $limit = $request->input('length');
         else
             $limit = $totalData;
+
         $start = $request->input('start');
+
         $order = $columns[$request->input('order.0.column')];
         $dir = $request->input('order.0.dir');
+        
         if(empty($request->input('search.value'))) {
             if(Auth::user()->role_id > 2 && config('staff_access') == 'own')
                 $purchases = Purchase::with('supplier', 'warehouse')->offset($start)
@@ -1152,7 +1155,9 @@ class PurchaseController extends Controller
         if($role->hasPermissionTo('purchases-delete')){
             $lims_purchase_data = Purchase::find($id);
             $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
+            
             foreach ($lims_product_purchase_data as $product_purchase_data) {
+
                 $lims_purchase_unit_data = Unit::find($product_purchase_data->purchase_unit_id);
 
                 if ($lims_purchase_unit_data->operator == '*')
@@ -1169,8 +1174,6 @@ class PurchaseController extends Controller
                         ->first();
                     $lims_product_variant_data->qty -= $recieved_qty;
                     $lims_product_variant_data->save();
-
-
                 }
                 elseif($product_purchase_data->product_batch_id) {
                     $lims_product_batch_data = ProductBatch::find($product_purchase_data->product_batch_id);
