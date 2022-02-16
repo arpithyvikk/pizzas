@@ -520,7 +520,7 @@
              $("table.product-order-list").append(newBody);
         });
 
-        var htmlfooter = '<p><strong>{{trans("file.Note")}}:</strong> '+order[2]+'</p><strong>{{trans("file.Created By")}}:</strong><br>'+order[3]+'<br>'+order[4];
+        var htmlfooter = '';
 
         $('#order-content').html(htmltext);
         $('#order-footer').html(htmlfooter);

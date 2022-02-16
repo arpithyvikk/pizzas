@@ -61,7 +61,7 @@
                                                         <th class="recieved-product-qty d-none">{{trans('file.Recieved')}}</th>
                                                         <th></th>
                                                         <th></th>
-                                                        <th>{{trans('file.Net Unit Cost')}}</th>
+                                                        <th>Unit Name</th>
                                                         {{-- <th>{{trans('file.Discount')}}</th> --}}
                                                         {{-- <th>{{trans('file.Tax')}}</th> --}}
                                                         {{-- <th>{{trans('file.Subtotal')}}</th> --}}
@@ -137,7 +137,8 @@
                                                             <input type="hidden" class="form-control expired-date" name="expired_date[]" disabled />
                                                         </td>
                                                         @endif
-                                                        <td class="net_unit_cost">{{ number_format((float)$product_purchase->net_unit_cost, 2, '.', '') }} </td>
+                                                        <td>{{$units->unit_code}}</td>
+                                                        {{-- <td class="net_unit_cost">{{ number_format((float)$product_purchase->net_unit_cost, 2, '.', '') }} </td> --}}
                                                         {{-- <td class="discount">{{ number_format((float)$product_purchase->discount, 2, '.', '') }}</td>
                                                         <td class="tax">{{ number_format((float)$product_purchase->tax, 2, '.', '') }}</td>
                                                         <td class="sub-total">{{ number_format((float)$product_purchase->total, 2, '.', '') }}</td> --}}

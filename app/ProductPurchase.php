@@ -11,4 +11,9 @@ class ProductPurchase extends Model
 
         "purchase_id", "product_id", "product_batch_id", "variant_id", "imei_number", "qty", "recieved", "purchase_unit_id", "net_unit_cost", "discount", "tax_rate", "tax", "total"
     ];
+
+    function getunits()
+    {
+        return $this->belongsTo(Unit::class);
+    }
 }

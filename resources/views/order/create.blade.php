@@ -201,7 +201,7 @@
 
         var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+pdate+'<br><br><strong>Name: </strong>'+pname+'<br><strong>Code: </strong>'+pcode;
         
-        $.get('product_order/' + id, function(data){
+        $.get('pizza_order/' + id, function(data){
             $(".product-order-list tbody").remove();
             var product_id = data[0];
             var qty = data[1];

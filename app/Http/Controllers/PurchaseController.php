@@ -313,13 +313,14 @@ class PurchaseController extends Controller
         }
         $product[] = $lims_product_data->tax_method;
 
-        $units = Unit::where("base_unit", $lims_product_data->unit_id)
-                    ->orWhere('id', $lims_product_data->unit_id)
-                    ->get();
+        $unit = Unit::where("base_unit", $lims_product_data->unit_id)
+                    ->orWhere('id', $lims_product_data->purchase_unit_id)
+                    ->first();
+
         $unit_name = array();
         $unit_operator = array();
         $unit_operation_value = array();
-        foreach ($units as $unit) {
+       
             if ($lims_product_data->purchase_unit_id == $unit->id) {
                 array_unshift($unit_name, $unit->unit_name);
                 array_unshift($unit_operator, $unit->operator);
@@ -329,9 +330,8 @@ class PurchaseController extends Controller
                 $unit_operator[] = $unit->operator;
                 $unit_operation_value[] = $unit->operation_value;
             }
-        }
         
-        $product[] = implode(",", $unit_name) . ',';
+        $product[] = implode(",", $unit_name) . '';
         $product[] = implode(",", $unit_operator) . ',';
         $product[] = implode(",", $unit_operation_value) . ',';
         $product[] = $lims_product_data->id;
@@ -664,8 +664,10 @@ class PurchaseController extends Controller
             $lims_product_list_with_variant = $this->productWithVariant();
             $lims_purchase_data = Purchase::find($id);
             $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
+            return dd($lims_product_purchase_data[]->purchase_unit_id);
+            $units = Unit::where('id', )->get();
 
-            return view('purchase.edit', compact('lims_warehouse_list', 'lims_supplier_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant', 'lims_tax_list', 'lims_purchase_data', 'lims_product_purchase_data'));
+            return view('purchase.edit', compact('lims_warehouse_list', 'units','lims_supplier_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant', 'lims_tax_list', 'lims_purchase_data', 'lims_product_purchase_data'));
         }
         else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
@@ -1161,12 +1163,11 @@ class PurchaseController extends Controller
                 $lims_purchase_unit_data = Unit::find($product_purchase_data->purchase_unit_id);
 
                 if ($lims_purchase_unit_data->operator == '*')
-                    $recieved_qty = $product_purchase_data->recieved * $lims_purchase_unit_data->operation_value;
+                    $recieved_qty = $product_purchase_data->qty * $lims_purchase_unit_data->operation_value;
                 else
-                    $recieved_qty = $product_purchase_data->recieved / $lims_purchase_unit_data->operation_value;
+                    $recieved_qty = $product_purchase_data->qty / $lims_purchase_unit_data->operation_value;
 
                 $lims_product_data = Product::find($product_purchase_data->product_id);
-
 
                 if($product_purchase_data->variant_id) {
                     $lims_product_variant_data = ProductVariant::select('id', 'qty')->FindExactProduct($lims_product_data->id, $product_purchase_data->variant_id)->first();

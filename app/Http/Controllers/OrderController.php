@@ -272,13 +272,30 @@ class OrderController extends Controller
             $pizza_id = $product_pizza_data->pizza_id;
             
             $pizza_data = (array)json_decode($pizza_id);
-            
+                        
             foreach($pizza_data as $pkey => $pvalue)
             {
                 $pizzas = Pizza::where('id',$pkey)->first(); 
                 $product_pizza[0][] = $pizzas->name;
                 $product_pizza[1][] = $pizza_data[$pkey];
             }
+        }
+        return $product_pizza;
+    }
+
+    public function pizzaOrderData($id)
+    {
+        $lims_product_pizza_data = ProductPizza::where('pizza_id', $id)->get();
+
+        foreach ($lims_product_pizza_data as $key => $product_pizza_data) {
+            
+            $product = Product::find($product_pizza_data->product_id);
+
+            $unit = Unit::find($product->sale_unit_id);
+
+            $product_pizza[0][$key] = $product->name;
+            $product_pizza[1][$key] = $product_pizza_data->qty;
+            $product_pizza[2][$key] = $unit->unit_name;
         }
         return $product_pizza;
     }
@@ -524,7 +541,6 @@ class OrderController extends Controller
 
             //order insert start
             
-
             $pizza_ary[$pizza->id] = $data['qty'];
 
             $pro_data = array();

@@ -73,13 +73,7 @@
                 </tr>
             </thead>
 
-            <tfoot class="tfoot active">
-                <th></th>
-                <th>{{trans('file.Total')}}</th>
-                <th></th>
-                <th></th>
-               
-            </tfoot>
+            
         </table>
     </div>
 </section>
@@ -110,6 +104,7 @@
                     <th>#</th>
                     <th>{{trans('file.product')}}</th>
                     <th>Qty</th>
+                    <th>Unit Name</th>
                 </thead>
                 <tbody>
                 </tbody>
@@ -690,7 +685,7 @@
 
             var name_code = data[0];
             var qty = data[1];
-            // var unit_code = data[0];
+            var unit = data[2];
             var tax = data[3];
             // var tax_rate = data[4];
             // var discount = data[5];
@@ -702,8 +697,8 @@
                 var cols = '';
                 cols += '<td><strong>' + (index+1) + '</strong></td>';
                 cols += '<td>' + name_code[index] + '</td>';
-                // cols += '<td>' + batch_no[index] + '</td>';
                 cols += '<td>' + qty[index] + '</td>';
+                cols += '<td>' + unit[index] + '</td>';
                 // cols += '<td>' + (subtotal[index] / qty[index]) + '</td>';
                 // cols += '<td>' + tax[index] + '(' + tax_rate[index] + '%)' + '</td>';
                 // cols += '<td>' + discount[index] + '</td>';
