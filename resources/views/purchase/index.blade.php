@@ -104,7 +104,7 @@
                     <th>#</th>
                     <th>{{trans('file.product')}}</th>
                     <th>Qty</th>
-                    <th>Unit Name</th>
+                    <th>Unit</th>
                 </thead>
                 <tbody>
                 </tbody>

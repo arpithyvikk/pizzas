@@ -132,13 +132,13 @@
                   </div>
                 </div>
                 <!-- Count item widget-->
-                <div class="col-sm-3">
+                {{-- <div class="col-sm-3">
                   <div class="wrapper count-title text-center">
                     <div class="icon"><i class="dripicons-media-loop" style="color: #00c689"></i></div>
                     <div class="name"><strong style="color: #00c689">{{trans('file.Purchase Return')}}</strong></div>
                     <div class="count-number purchase_return-data">{{number_format((float)$purchase_return, 2, '.', '')}}</div>
                   </div>
-                </div>
+                </div> --}}
                 <!-- Count item widget-->
                 <div class="col-sm-3">
                   <div class="wrapper count-title text-center">
@@ -177,7 +177,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-5 mt-4">
+            {{-- <div class="col-md-5 mt-4">
               <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                   <h4>{{date('F')}} {{date('Y')}}</h4>
@@ -186,13 +186,13 @@
                     <canvas id="transactionChart" data-color = "{{$color}}" data-color_rgba = "{{$color_rgba}}" data-revenue={{$revenue}} data-purchase={{$purchase}} data-expense={{$expense}} data-label1="{{trans('file.Purchase')}}" data-label2="{{trans('file.revenue')}}" data-label3="{{trans('file.Expense')}}" width="100" height="95"> </canvas>
                 </div>
               </div>
-            </div>
+            </div> --}}
           </div>
         </div>
 
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-12">
+            {{-- <div class="col-md-12">
               <div class="card">
                 <div class="card-header d-flex align-items-center">
                   <h4>{{trans('file.yearly report')}}</h4>
@@ -201,7 +201,7 @@
                   <canvas id="saleChart" data-sale_chart_value = "{{json_encode($yearly_sale_amount)}}" data-purchase_chart_value = "{{json_encode($yearly_purchase_amount)}}" data-label1="{{trans('file.Purchased Amount')}}" data-label2="{{trans('file.Sold Amount')}}"></canvas>
                 </div>
               </div>
-            </div>
+            </div> --}}
             <div class="col-md-7">
               <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
@@ -259,7 +259,7 @@
                         </table>
                       </div>
                   </div>
-                  <div role="tabpanel" class="tab-pane fade" id="purchase-latest">
+                  {{-- <div role="tabpanel" class="tab-pane fade" id="purchase-latest">
                       <div class="table-responsive">
                         <table class="table">
                           <thead>
@@ -297,7 +297,7 @@
                           </tbody>
                         </table>
                       </div>
-                  </div>
+                  </div> --}}
                   <div role="tabpanel" class="tab-pane fade" id="quotation-latest">
                       <div class="table-responsive">
                         <table class="table">

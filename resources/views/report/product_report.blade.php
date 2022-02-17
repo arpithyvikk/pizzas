@@ -51,37 +51,22 @@
                 <tr>
                     <th class="not-exported"></th>
                     <th>{{trans('file.Product Name')}}</th>
-                    <th>{{trans('file.Purchased Amount')}}</th>
+                    {{-- <th>{{trans('file.Purchased Amount')}}</th> --}}
                     <th>{{trans('file.Purchased')}} {{trans('file.qty')}}</th>
                     <!-- <th>Transfered Amount</th>
                     <th>Transfered Qty</th> -->
-                    <th>{{trans('file.Sold Amount')}}</th>
-                    <th>{{trans('file.Sold')}} {{trans('file.qty')}}</th>
-                    <th>Returned Amount</th>
-                    <th>Returned Qty</th>
-                    <th>Purchase Returned Amount</th>
-                    <th>Purchase Returned Qty</th>
-                    <th>{{trans('file.profit')}}</th>
+                    {{-- <th>{{trans('file.Sold Amount')}}</th> --}}
+                    {{-- <th>{{trans('file.Sold')}} {{trans('file.qty')}}</th> --}}
+                    {{-- <th>Returned Amount</th> --}}
+                    {{-- <th>Returned Qty</th> --}}
+                    {{-- <th>Purchase Returned Amount</th> --}}
+                    {{-- <th>Purchase Returned Qty</th> --}}
+                    {{-- <th>{{trans('file.profit')}}</th> --}}
                     <th>{{trans('file.In Stock')}}</th>
+                    <th>Unit</th>
+
                 </tr>
             </thead>
-
-            <tfoot class="tfoot active">
-                <th></th>
-                <th>{{trans('file.Total')}}</th>
-                <th></th>
-                <th></th>
-                <!-- <th></th>
-                <th></th> -->
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tfoot>
         </table>
     </div>
 </section>
@@ -138,18 +123,20 @@
         "columns": [
             {"data": "key"},
             {"data": "name"},
-            {"data": "purchased_amount"},
+            // {"data": "purchased_amount"},
             {"data": "purchased_qty"},
             /*{"data": "transfered_amount"},
             {"data": "transfered_qty"},*/
-            {"data": "sold_amount"},
-            {"data": "sold_qty"},
-            {"data": "returned_amount"},
-            {"data": "returned_qty"},
-            {"data": "purchase_returned_amount"},
-            {"data": "purchase_returned_qty"},
-            {"data": "profit"},
+            // {"data": "sold_amount"},
+            // {"data": "sold_qty"},
+            // {"data": "returned_amount"},
+            // {"data": "returned_qty"},
+            // {"data": "purchase_returned_amount"},
+            // {"data": "purchase_returned_qty"},
+            // {"data": "profit"},
             {"data": "in_stock"},
+            {"data": "unit_code"},
+
         ],
         'language': {
             'lengthMenu': '_MENU_ {{trans("file.records per page")}}',
@@ -164,7 +151,7 @@
         'columnDefs': [
             {
                 "orderable": false,
-                'targets': [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, /*12, 13*/]
+                'targets': [0, 2, 3 /*12, 13*/]
             },
             {
                 'render': function(data, type, row, meta){
@@ -245,28 +232,28 @@
 
             $( dt_selector.column( 2 ).footer() ).html(dt_selector.cells( rows, 2, { page: 'current' } ).data().sum().toFixed(2));
             $( dt_selector.column( 3 ).footer() ).html(dt_selector.cells( rows, 3, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 4 ).footer() ).html(dt_selector.cells( rows, 4, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 5 ).footer() ).html(dt_selector.cells( rows, 5, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 6 ).footer() ).html(dt_selector.cells( rows, 6, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 7 ).footer() ).html(dt_selector.cells( rows, 7, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 8 ).footer() ).html(dt_selector.cells( rows, 8, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 9 ).footer() ).html(dt_selector.cells( rows, 9, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 10 ).footer() ).html(dt_selector.cells( rows, 10, { page: 'current' } ).data().sum().toFixed(2));
-            $( dt_selector.column( 11 ).footer() ).html(dt_selector.cells( rows, 11, { page: 'current' } ).data().sum().toFixed(2));
+            // $( dt_selector.column( 4 ).footer() ).html(dt_selector.cells( rows, 4, { page: 'current' } ).data().sum().toFixed(2));
+            // $( dt_selector.column( 5 ).footer() ).html(dt_selector.cells( rows, 5, { page: 'current' } ).data().sum().toFixed(2));
+            // $( dt_selector.column( 6 ).footer() ).html(dt_selector.cells( rows, 6, { page: 'current' } ).data().sum().toFixed(2));
+            // $( dt_selector.column( 7 ).footer() ).html(dt_selector.cells( rows, 7, { page: 'current' } ).data().sum().toFixed(2));
+            // $( dt_selector.column( 8 ).footer() ).html(dt_selector.cells( rows, 8, { page: 'current' } ).data().sum().toFixed(2));
+            // $( dt_selector.column( 9 ).footer() ).html(dt_selector.cells( rows, 9, { page: 'current' } ).data().sum().toFixed(2));
+            // $( dt_selector.column( 10 ).footer() ).html(dt_selector.cells( rows, 10, { page: 'current' } ).data().sum().toFixed(2));
+            // $( dt_selector.column( 11 ).footer() ).html(dt_selector.cells( rows, 11, { page: 'current' } ).data().sum().toFixed(2));
             /*$( dt_selector.column( 12 ).footer() ).html(dt_selector.cells( rows, 12, { page: 'current' } ).data().sum().toFixed(2));
             $( dt_selector.column( 13 ).footer() ).html(dt_selector.cells( rows, 13, { page: 'current' } ).data().sum().toFixed(2));*/
         }
         else {
             $( dt_selector.column( 2 ).footer() ).html(dt_selector.column( 2, {page:'current'} ).data().sum().toFixed(2));
             $( dt_selector.column( 3 ).footer() ).html(dt_selector.column( 3, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 4 ).footer() ).html(dt_selector.column( 4, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 5 ).footer() ).html(dt_selector.column( 5, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 6 ).footer() ).html(dt_selector.column( 6, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 7 ).footer() ).html(dt_selector.column( 7, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 8 ).footer() ).html(dt_selector.column( 8, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 9 ).footer() ).html(dt_selector.column( 9, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 10 ).footer() ).html(dt_selector.column( 10, {page:'current'} ).data().sum().toFixed(2));
-            $( dt_selector.column( 11 ).footer() ).html(dt_selector.column( 11, {page:'current'} ).data().sum().toFixed(2));
+            // $( dt_selector.column( 4 ).footer() ).html(dt_selector.column( 4, {page:'current'} ).data().sum().toFixed(2));
+            // $( dt_selector.column( 5 ).footer() ).html(dt_selector.column( 5, {page:'current'} ).data().sum().toFixed(2));
+            // $( dt_selector.column( 6 ).footer() ).html(dt_selector.column( 6, {page:'current'} ).data().sum().toFixed(2));
+            // $( dt_selector.column( 7 ).footer() ).html(dt_selector.column( 7, {page:'current'} ).data().sum().toFixed(2));
+            // $( dt_selector.column( 8 ).footer() ).html(dt_selector.column( 8, {page:'current'} ).data().sum().toFixed(2));
+            // $( dt_selector.column( 9 ).footer() ).html(dt_selector.column( 9, {page:'current'} ).data().sum().toFixed(2));
+            // $( dt_selector.column( 10 ).footer() ).html(dt_selector.column( 10, {page:'current'} ).data().sum().toFixed(2));
+            // $( dt_selector.column( 11 ).footer() ).html(dt_selector.column( 11, {page:'current'} ).data().sum().toFixed(2));
             /*$( dt_selector.column( 12 ).footer() ).html(dt_selector.column( 12, {page:'current'} ).data().sum().toFixed(2));
             $( dt_selector.column( 13 ).footer() ).html(dt_selector.column( 13, {page:'current'} ).data().sum().toFixed(2));*/
         }

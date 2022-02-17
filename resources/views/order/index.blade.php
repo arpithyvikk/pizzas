@@ -63,6 +63,7 @@
                     <th class="not-exported"></th>
                     <th>Date</th>
                     <th>No of items</th>
+                    <th>Shop Name</th>
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
             </thead>
@@ -356,6 +357,7 @@
                 {"data": "key"},
                 {"data": "order_date"},
                 {"data": "no_of_item"},
+                {"data": "shop_name"},
                 {"data": "options"},
             ],
             'language': {
@@ -372,7 +374,7 @@
             'columnDefs': [
                 {
                     "orderable": false,
-                    'targets': [0]
+                    'targets': [0,3,4]
                 },
                 {
                     'render': function(data, type, row, meta){
@@ -498,8 +500,8 @@
     }
 
     function orderDetails(order){
-        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+order[2];
-        $.get('orders/product_order/' + order[2], function(data){
+        var htmltext = '<strong>{{trans("file.Date")}}: </strong>'+order[2]+'<br><strong>Shop: </strong>'+ order[3];
+        $.get('orders/product_order/' + order[1], function(data){
             $(".product-order-list tbody").remove();
             var order_date = data[0];
             var name = data[0];

@@ -196,6 +196,10 @@ class OrderController extends Controller
                 $form = count($index_data);
                 
                 $nestedData['no_of_item'] = $form;
+                
+                $shops = Warehouse::select('name')->find($order->warehouse_id);
+                
+                $nestedData['shop_name'] = $shops->name;
 
                 // return dd($form);
               
@@ -249,7 +253,7 @@ class OrderController extends Controller
                 // data for purchase details by one click
                 $user = User::find($order->user_id);
                 // $nestedData['order'] = array('[ "'.date(config('date_format'), strtotime($order->created_at->toDateString())).'"', ' "'.$purchase->reference_no.'"', ' "'.$purchase_status.'"',  ' "'.$purchase->id.'"', ' "'.$purchase->warehouse->name.'"', ' "'.$purchase->warehouse->phone.'"', ' "'.$purchase->warehouse->address.'"', ' "'.preg_replace('/\s+/S', " ", $purchase->note).'"', ' "'.$user->name.'"', ' "'.$user->email.'"]');
-                $nestedData['order'] = array('["'.date(config('date_format'), strtotime($order->created_at->toDateString())).'"', ' "'.$order->id.'"', ' "'.$order->order_date.'"]');
+                $nestedData['order'] = array('["'.date(config('date_format'), strtotime($order->created_at->toDateString())).'"', ' "'.$order->id.'"', ' "'.$order->order_date.'"', ' "'.$shops->name.'"]');
                 $data[] = $nestedData;
             }
         }
@@ -263,9 +267,9 @@ class OrderController extends Controller
         echo json_encode($json_data);
     }
 
-    public function productOrderData($order_date)
+    public function productOrderData($id)
     {
-        $lims_product_pizza_data = Order::where('order_date', $order_date)->get();
+        $lims_product_pizza_data = Order::where('id', $id)->get();
 
         foreach ($lims_product_pizza_data as $key => $product_pizza_data) {
             
@@ -309,24 +313,7 @@ class OrderController extends Controller
             'quantity' => 'required',
         ]);
         
-        $f_pizza_id = $request->pizza_id;
-        $f_pizza_qty = $request->quantity;
-
-        $pizza_ary = array();
-
-        foreach($f_pizza_id as $key => $value)
-        {
-            $pizza_ary[$value] = $f_pizza_qty[$key];
-        }
-                
-        $form = json_encode($pizza_ary);
-                
-        $order = new Order;
-        $order->order_date = $request->order_date;
-        $order->pizza_id = $form;
-        $order->warehouse_id = $request->warehouse_id;
-        $order->user_id = Auth::id();
-        $order->save();
+        
 
         $pro_data = array();
         $product_items = Product::all();
@@ -402,27 +389,49 @@ class OrderController extends Controller
             if($value != 0) 
             {
                 $id = $key;
-                $p_data = Product::find($id);
-                $p_qty = $p_data->qty;
-                $total_qty = $p_qty - $value;
-                $p_data->qty = $total_qty;
-                $p_data->save();
-                echo $total_qty.'<br>';
 
                 $warehouse_data = Product_Warehouse::where([
                     ['product_id', '=' , $id],
                     ['warehouse_id', '=' ,$request->warehouse_id]
                 ])->first();
-                $w_qty = $warehouse_data->qty;
-                $total_W_qty = $w_qty - $value;
-                $warehouse_data->qty = $total_W_qty;
-                $warehouse_data->save();
-                echo $total_W_qty.'<br>';
 
-                // return dd($warehouse_data->qty);
+                if($warehouse_data)
+                {
+                    $w_qty = $warehouse_data->qty;
+                    $total_W_qty = $w_qty - $value;
+                    $warehouse_data->qty = $total_W_qty;
+                    $warehouse_data->save();
+                    
+                    $p_data = Product::find($id);
+                    $p_qty = $p_data->qty;
+                    $total_qty = $p_qty - $value;
+                    $p_data->qty = $total_qty;
+                    $p_data->save();
+                    
+                }              
+
             }
         }
-        
+
+        $f_pizza_id = $request->pizza_id;
+        $f_pizza_qty = $request->quantity;
+
+        $pizza_ary = array();
+
+        foreach($f_pizza_id as $key => $value)
+        {
+            $pizza_ary[$value] = $f_pizza_qty[$key];
+        }
+                
+        $form = json_encode($pizza_ary);
+                
+        $order = new Order;
+        $order->order_date = $request->order_date;
+        $order->pizza_id = $form;
+        $order->warehouse_id = $request->warehouse_id;
+        $order->user_id = Auth::id();
+        $order->save();
+
         return redirect('orders')->with('message', 'Order added successfully');
     }
 

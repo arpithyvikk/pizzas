@@ -14,6 +14,6 @@ class ProductPurchase extends Model
 
     function getunits()
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(Unit::class,'purchase_unit_id');
     }
 }

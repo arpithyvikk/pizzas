@@ -61,7 +61,7 @@
                                                         <th class="recieved-product-qty d-none">{{trans('file.Recieved')}}</th>
                                                         <th></th>
                                                         <th></th>
-                                                        <th>Unit Name</th>
+                                                        <th>Unit</th>
                                                         {{-- <th>{{trans('file.Discount')}}</th> --}}
                                                         {{-- <th>{{trans('file.Tax')}}</th> --}}
                                                         {{-- <th>{{trans('file.Subtotal')}}</th> --}}
@@ -137,7 +137,7 @@
                                                             <input type="hidden" class="form-control expired-date" name="expired_date[]" disabled />
                                                         </td>
                                                         @endif
-                                                        <td>{{$units->unit_code}}</td>
+                                                        <td>{{$product_purchase->getunits->unit_code}}</td>
                                                         {{-- <td class="net_unit_cost">{{ number_format((float)$product_purchase->net_unit_cost, 2, '.', '') }} </td> --}}
                                                         {{-- <td class="discount">{{ number_format((float)$product_purchase->discount, 2, '.', '') }}</td>
                                                         <td class="tax">{{ number_format((float)$product_purchase->tax, 2, '.', '') }}</td>
@@ -540,6 +540,7 @@ function productSearch(data) {
             if(flag){
                 var newRow = $("<tr>");
                 var cols = '';
+                console.log(data);
                 temp_unit_name = (data[6]).split(',');
                 cols += '<td>' + data[0] + '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
                 cols += '<td>' + data[1] + '</td>';
@@ -558,9 +559,9 @@ function productSearch(data) {
                     cols += '<td><input type="hidden" class="form-control batch-no" name="batch_no[]" disabled/></td>';
                     cols += '<td><input type="hidden" class="form-control expired-date" name="expired_date[]" disabled/></td>';
                 }
-                cols += '<td></td>';
+                cols += '<td>'+ data[6] +'</td>';
 
-                cols += '<td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>';
+                cols += '<td><button type="button" class="ibtnDel btn btn-md btn-danger btn-sm"><i class="fa fa-trash"></i></button></td>';
                 cols += '<input type="hidden" class="product-code" name="product_code[]" value="' + data[1] + '"/>';
                 cols += '<input type="hidden" class="product-id" name="product_id[]" value="' + data[9] + '"/>';
                 cols += '<input type="hidden" class="purchase-unit" name="purchase_unit[]" value="' + temp_unit_name[0] + '"/>';

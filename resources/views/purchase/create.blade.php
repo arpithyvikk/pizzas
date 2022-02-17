@@ -73,7 +73,7 @@
                                                         <th class="recieved-product-qty d-none">{{trans('file.Recieved')}}</th>
                                                         <th></th>
                                                         <th></th>
-                                                        <th>Unit Name</th>
+                                                        <th>Unit</th>
                                                         {{-- <th>{{trans('file.Discount')}}</th> --}}
                                                         {{-- <th>{{trans('file.Tax')}}</th> --}}
                                                         {{-- <th>{{trans('file.Subtotal')}}</th> --}}

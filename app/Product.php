@@ -25,6 +25,11 @@ class Product extends Model
         return $this->belongsTo('App\Unit');
     }
 
+    function getunits()
+    {
+        return $this->belongsTo('App\Unit','purchase_unit_id');
+    }
+
     public function variant()
     {
         return $this->belongsToMany('App\Variant', 'product_variants')->withPivot('id', 'item_code', 'additional_price');

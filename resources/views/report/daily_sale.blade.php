@@ -45,55 +45,27 @@
 
 						    			if($flag){
 						    				if($year.'-'.$month.'-'.$i == date('Y').'-'.date('m').'-'.(int)date('d'))
-						    					echo '<td><p style="color:red"><strong>'.$i.'</strong></p>';
+						    					echo '<td><p style="color:#7c5cc4"><strong>'.$i.'</strong></p>';
 						    				else
 						    					echo '<td><p><strong>'.$i.'</strong></p>';
 
-						    				if($total_discount[$i]){
-						    					echo '<strong>'.trans("file.Product Discount").'</strong><br><span>'.$total_discount[$i].'</span><br><br>';
+						    				if($order_date[$i]){
+						    					echo '<strong>Total Orders</strong><br><span>'.$order_date[$i].'</span><br><br>';
 						    				}
-						    				if($order_discount[$i]){
-						    					echo '<strong>'.trans("file.Order Discount").'</strong><br><span>'.$order_discount[$i].'</span><br><br>';
-						    				}
-						    				if($total_tax[$i]){
-						    					echo '<strong>'.trans("file.Product Tax").'</strong><br><span>'.$total_tax[$i].'</span><br><br>';
-						    				}
-						    				if($order_tax[$i]){
-						    					echo '<strong>'.trans("file.Order Tax").'</strong><br><span>'.$order_tax[$i].'</span><br><br>';
-						    				}
-						    				if($shipping_cost[$i]){
-						    					echo '<strong>'.trans("file.Shipping Cost").'</strong><br><span>'.$shipping_cost[$i].'</span><br><br>';
-						    				}
-						    				if($grand_total[$i]){
-						    					echo '<strong>'.trans("file.grand total").'</strong><br><span>'.$grand_total[$i].'</span><br><br>';
-						    				}
+						    				
 						    				echo '</td>';
 						    				$i++;
 						    			}
 						    			elseif($j == $start_day){
 						    				if($year.'-'.$month.'-'.$i == date('Y').'-'.date('m').'-'.(int)date('d'))
-						    					echo '<td><p style="color:red"><strong>'.$i.'</strong></p>';
+						    					echo '<td><p style="color:#7c5cc4"><strong>'.$i.'</strong></p>';
 						    				else
 						    					echo '<td><p><strong>'.$i.'</strong></p>';
 
-						    				if($total_discount[$i]){
-						    					echo '<strong>'.trans("file.Product Discount").'</strong><br><span>'.$total_discount[$i].'</span><br><br>';
-						    				}
-						    				if($order_discount[$i]){
-						    					echo '<strong>'.trans("file.Order Discount").'</strong><br><span>'.$order_discount[$i].'</span><br><br>';
-						    				}
-						    				if($total_tax[$i]){
-						    					echo '<strong>'.trans("file.Product Tax").'</strong><br><span>'.$total_tax[$i].'</span><br><br>';
-						    				}
-						    				if($order_tax[$i]){
-						    					echo '<strong>'.trans("file.Order Tax").'</strong><br><span>'.$order_tax[$i].'</span><br><br>';
-						    				}
-						    				if($shipping_cost[$i]){
-						    					echo '<strong>'.trans("file.Shipping Cost").'</strong><br><span>'.$shipping_cost[$i].'</span><br><br>';
-						    				}
-						    				if($grand_total[$i]){
-						    					echo '<strong>'.trans("file.grand total").'</strong><br><span>'.$grand_total[$i].'</span><br><br>';
-						    				}
+						    				
+											if($order_date[$i]){
+						    					echo '<strong>Total Orders</strong><br><span>'.$order_date[$i].'</span><br><br>';
+						    				}	
 						    				echo '</td>';
 						    				$flag = 1;
 						    				$i++;

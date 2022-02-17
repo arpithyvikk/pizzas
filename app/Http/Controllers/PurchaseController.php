@@ -663,11 +663,10 @@ class PurchaseController extends Controller
             $lims_product_list_without_variant = $this->productWithoutVariant();
             $lims_product_list_with_variant = $this->productWithVariant();
             $lims_purchase_data = Purchase::find($id);
-            $lims_product_purchase_data = ProductPurchase::where('purchase_id', $id)->get();
-            return dd($lims_product_purchase_data[]->purchase_unit_id);
-            $units = Unit::where('id', )->get();
+            $lims_product_purchase_data = ProductPurchase::with('getunits')->where('purchase_id', $id)->get();
 
-            return view('purchase.edit', compact('lims_warehouse_list', 'units','lims_supplier_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant', 'lims_tax_list', 'lims_purchase_data', 'lims_product_purchase_data'));
+            // return dd($lims_product_purchase_data);
+            return view('purchase.edit', compact('lims_warehouse_list','lims_supplier_list', 'lims_product_list_without_variant', 'lims_product_list_with_variant', 'lims_tax_list', 'lims_purchase_data', 'lims_product_purchase_data'));
         }
         else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');

@@ -671,12 +671,12 @@
                     {!! Form::close() !!}
                   </li>
                   @endif
-                  {{-- @if($daily_sale_active)
+                  @if($daily_sale_active)
                   <li id="daily-sale-report-menu">
                     <a href="{{url('report/daily_sale/'.date('Y').'/'.date('m'))}}">{{trans('file.Daily Sale')}}</a>
                   </li>
                   @endif
-                  @if($monthly_sale_active)
+                  {{-- @if($monthly_sale_active)
                   <li id="monthly-sale-report-menu">
                     <a href="{{url('report/monthly_sale/'.date('Y'))}}">{{trans('file.Monthly Sale')}}</a>
                   </li>

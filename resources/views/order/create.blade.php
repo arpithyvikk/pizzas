@@ -30,7 +30,7 @@
                     <div class="form-group">
                         <label><strong> Select Shop </strong> </label>
                         <div class="input-group">
-                          <select name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select Brand...">
+                          <select name="warehouse_id" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select Brand..." required>
                             @foreach($lims_warehouse_list as $shop)
                                 <option value="{{$shop->id}}">{{$shop->name}}</option>
                             @endforeach
