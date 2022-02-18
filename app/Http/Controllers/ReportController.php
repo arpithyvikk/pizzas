@@ -24,6 +24,7 @@ use App\Payroll;
 use App\User;
 use App\Customer;
 use App\Order;
+use App\Pizza;
 use App\Supplier;
 use App\Variant;
 use App\ProductVariant;
@@ -40,7 +41,7 @@ class ReportController extends Controller
     {
         $role = Role::find(Auth::user()->role_id);
         if($role->hasPermissionTo('product-qty-alert')){
-            $lims_product_data = Product::select('name','code', 'image', 'qty', 'alert_quantity')->where('is_active', true)->whereColumn('alert_quantity', '>', 'qty')->get();
+            $lims_product_data = Product::select('name','code', 'image', 'qty', 'alert_quantity','unit_id')->where('is_active', true)->whereColumn('alert_quantity', '>', 'qty')->get();
             return view('report.qty_alert_report', compact('lims_product_data'));
         }
         else
@@ -205,29 +206,25 @@ class ReportController extends Controller
             $shipping_cost[$start] = $sale_data[0]->shipping_cost;
             $grand_total[$start] = $sale_data[0]->grand_total;
 
-            
             $orders = Order::where('warehouse_id', $data['warehouse_id'])->where('order_date', $date)->get();
 
-                $pizza_id = []; 
+            $pizza_id = []; 
 
-                if($orders)
-                {
-                    foreach ($orders as $key => $order) {
+            if($orders)
+            {
+                foreach ($orders as $key => $order) {
 
-                        $index_data =array();
+                    $index_data =array();
 
-                        $index_data = (array)json_decode($order->pizza_id);
+                    $index_data = (array)json_decode($order->pizza_id);
 
-                        $form = count($index_data);
-                        
-                        $pizza_id[] = $form;
-                    }
-
-                    $order_date[$start] = array_sum($pizza_id);
+                    $form = count($index_data);
+                    
+                    $pizza_id[] = $form;
                 }
 
-            
-
+                $order_date[$start] = array_sum($pizza_id);
+            }
             $start++;
         }
         $start_day = date('w', strtotime($year.'-'.$month.'-01')) + 1;
@@ -237,8 +234,37 @@ class ReportController extends Controller
         $next_month = date('m', strtotime('+1 month', strtotime($year.'-'.$month.'-01')));
         $lims_warehouse_list = Warehouse::where('is_active', true)->get();
         $warehouse_id = $data['warehouse_id'];
+
         return view('report.daily_sale', compact('order_date','total_discount','order_discount', 'total_tax', 'order_tax', 'shipping_cost', 'grand_total', 'start_day', 'year', 'month', 'number_of_day', 'prev_year', 'prev_month', 'next_year', 'next_month', 'lims_warehouse_list', 'warehouse_id'));
 
+    }
+
+
+    public function OrderData($orderdate, $warehouse_id)
+    {
+
+        if($warehouse_id !=0)
+        {
+            $lims_product_pizza_data = Order::where('order_date', $orderdate)->where('warehouse_id','=',$warehouse_id)->get();
+        }
+        else
+        {
+            $lims_product_pizza_data = Order::where('order_date', $orderdate)->get();
+        }
+
+        foreach ($lims_product_pizza_data as $key => $product_pizza_data) {
+            
+            $pizza_id = $product_pizza_data->pizza_id;
+            $pizza_data = (array)json_decode($pizza_id);
+
+            foreach($pizza_data as $pkey => $pvalue)
+            {
+                $pizzas = Pizza::where('id',$pkey)->first(); 
+                $product_pizza[0][] = $pizzas->name;
+                $product_pizza[1][] = $pizza_data[$pkey];
+            }
+        }
+        return $product_pizza;
     }
 
     public function dailyPurchase($year, $month)

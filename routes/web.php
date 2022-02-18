@@ -218,6 +218,8 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 	Route::post('report/warehouse_stock', 'ReportController@warehouseStockById')->name('report.warehouseStock');
 	Route::get('report/daily_sale/{year}/{month}', 'ReportController@dailySale');
 	Route::post('report/daily_sale/{year}/{month}', 'ReportController@dailySaleByWarehouse')->name('report.dailySaleByWarehouse');
+	Route::get('report/daily_sale_order/{orderdate}/{warehouse_id}', 'ReportController@OrderData');
+
 	Route::get('report/monthly_sale/{year}', 'ReportController@monthlySale');
 	Route::post('report/monthly_sale/{year}', 'ReportController@monthlySaleByWarehouse')->name('report.monthlySaleByWarehouse');
 	Route::get('report/daily_purchase/{year}/{month}', 'ReportController@dailyPurchase');

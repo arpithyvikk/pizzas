@@ -14,7 +14,7 @@
 <section>
     <div class="container-fluid">
         <a href="#" data-toggle="modal" data-target="#createModal" class="btn btn-info"><i class="dripicons-plus"></i> {{trans('file.Add Warehouse')}}</a>
-        <a href="#" data-toggle="modal" data-target="#importWarehouse" class="btn btn-primary"><i class="dripicons-copy"></i> {{trans('file.Import Warehouse')}}</a>
+        {{-- <a href="#" data-toggle="modal" data-target="#importWarehouse" class="btn btn-primary"><i class="dripicons-copy"></i> {{trans('file.Import Warehouse')}}</a> --}}
     </div>
     <div class="table-responsive">
         <table id="warehouse-table" class="table">
@@ -46,7 +46,7 @@
                     ])->sum('product_warehouse.qty');
                 ?>
                 <tr data-id="{{$warehouse->id}}">
-                    <td>{{$key}}</td>
+                    <td>{{$key+1}}</td>
                     <td>{{ $warehouse->name }}</td>
                     <td>{{ $warehouse->phone}}</td>
                     <td>{{ $warehouse->email}}</td>
@@ -244,13 +244,13 @@
                 'targets': [0, 5, 6, 7]
             },
             {
-                'render': function(data, type, row, meta){
-                    if(type === 'display'){
-                        data = '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>';
-                    }
+                // 'render': function(data, type, row, meta){
+                //     if(type === 'display'){
+                //         data = '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>';
+                //     }
 
-                   return data;
-                },
+                //    return data;
+                // },
                 'checkboxes': {
                    'selectRow': true,
                    'selectAllRender': '<div class="checkbox"><input type="checkbox" class="dt-checkboxes"><label></label></div>'

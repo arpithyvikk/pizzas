@@ -735,11 +735,11 @@
                     <a href="{{route('report.qtyAlert')}}">{{trans('file.Product Quantity Alert')}}</a>
                   </li>
                   @endif
-                  @if($user_report_active)
+                  {{-- @if($user_report_active)
                   <li id="user-report-menu">
                     <a id="user-report-link" href="">{{trans('file.User Report')}}</a>
                   </li>
-                  @endif
+                  @endif --}}
 
 {{-- 
 

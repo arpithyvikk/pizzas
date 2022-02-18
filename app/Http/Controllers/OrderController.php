@@ -313,10 +313,10 @@ class OrderController extends Controller
             'quantity' => 'required',
         ]);
         
-        
 
         $pro_data = array();
         $product_items = Product::all();
+        
         foreach($product_items as $product_item)
         {
             $pro_data[$product_item->id] = 0;
@@ -388,27 +388,27 @@ class OrderController extends Controller
         {   
             if($value != 0) 
             {
-                $id = $key;
+                // $id = $key;
 
-                $warehouse_data = Product_Warehouse::where([
-                    ['product_id', '=' , $id],
-                    ['warehouse_id', '=' ,$request->warehouse_id]
-                ])->first();
+                // $warehouse_data = Product_Warehouse::where([
+                //     ['product_id', '=' , $id],
+                //     ['warehouse_id', '=' ,$request->warehouse_id]
+                // ])->first();
 
-                if($warehouse_data)
-                {
-                    $w_qty = $warehouse_data->qty;
-                    $total_W_qty = $w_qty - $value;
-                    $warehouse_data->qty = $total_W_qty;
-                    $warehouse_data->save();
+                // if($warehouse_data)
+                // {
+                //     $w_qty = $warehouse_data->qty;
+                //     $total_W_qty = $w_qty - $value;
+                //     $warehouse_data->qty = $total_W_qty;
+                //     $warehouse_data->save();
                     
-                    $p_data = Product::find($id);
-                    $p_qty = $p_data->qty;
-                    $total_qty = $p_qty - $value;
-                    $p_data->qty = $total_qty;
-                    $p_data->save();
+                //     $p_data = Product::find($id);
+                //     $p_qty = $p_data->qty;
+                //     $total_qty = $p_qty - $value;
+                //     $p_data->qty = $total_qty;
+                //     $p_data->save();
                     
-                }              
+                // }              
 
             }
         }
@@ -418,19 +418,26 @@ class OrderController extends Controller
 
         $pizza_ary = array();
 
+        $array = rsort($f_pizza_qty);
+
+
         foreach($f_pizza_id as $key => $value)
         {
-            $pizza_ary[$value] = $f_pizza_qty[$key];
+            if($f_pizza_qty[$key] > 0){
+                $pizza_ary[$value] = $f_pizza_qty[$key];
+            }
         }
                 
         $form = json_encode($pizza_ary);
                 
+        
         $order = new Order;
         $order->order_date = $request->order_date;
         $order->pizza_id = $form;
         $order->warehouse_id = $request->warehouse_id;
         $order->user_id = Auth::id();
         $order->save();
+        
 
         return redirect('orders')->with('message', 'Order added successfully');
     }
