@@ -716,15 +716,16 @@ class PurchaseController extends Controller
 
         foreach ($lims_product_purchase_data as $product_purchase_data) {
 
+
             $old_recieved_value = $product_purchase_data->qty;
 
             $lims_purchase_unit_data = Unit::find($product_purchase_data->purchase_unit_id);
 
-            // if ($lims_purchase_unit_data->operator == '*') {
-            //     $old_recieved_value = $old_recieved_value * $lims_purchase_unit_data->operation_value;
-            // } else {
-            //     $old_recieved_value = $old_recieved_value / $lims_purchase_unit_data->operation_value;
-            // }
+            if ($lims_purchase_unit_data->operator == '*') {
+                $old_recieved_value = $old_recieved_value * $lims_purchase_unit_data->operation_value;
+            } else {
+                $old_recieved_value = $old_recieved_value / $lims_purchase_unit_data->operation_value;
+            }
 
             $lims_product_data = Product::find($product_purchase_data->product_id);
             
@@ -747,7 +748,6 @@ class PurchaseController extends Controller
                 }
             }
 
-
             $lims_product_data->qty -= $old_recieved_value;
             $lims_product_warehouse_data->qty -= $old_recieved_value;
             $lims_product_warehouse_data->save();
@@ -759,12 +759,11 @@ class PurchaseController extends Controller
             
             $lims_purchase_unit_data = Unit::where('unit_name', $purchase_unit[$key])->first();
 
-
-            // if ($lims_purchase_unit_data->operator == '*') {
-            //     $new_recieved_value = $qty[$key] * $lims_purchase_unit_data->operation_value;
-            // } else {
-            //     $new_recieved_value = $qty[$key] / $lims_purchase_unit_data->operation_value;
-            // }
+            if ($lims_purchase_unit_data->operator == '*') {
+                $new_recieved_value = $qty[$key] * $lims_purchase_unit_data->operation_value;
+            } else {
+                $new_recieved_value = $qty[$key] / $lims_purchase_unit_data->operation_value;
+            }
 
 
             $lims_product_data = Product::find($pro_id);
@@ -826,10 +825,10 @@ class PurchaseController extends Controller
             }
             // return dd($qty[$key]);
             
-            $lims_product_data->qty += $qty[$key];
-
+            $lims_product_data->qty += $new_recieved_value;
+            // dd($lims_product_warehouse_data);
             if($lims_product_warehouse_data){
-                $lims_product_warehouse_data->qty += $qty[$key];
+                $lims_product_warehouse_data->qty += $new_recieved_value;
                 $lims_product_warehouse_data->save();
             }
             else {
@@ -838,7 +837,7 @@ class PurchaseController extends Controller
                 $lims_product_warehouse_data->product_batch_id = $product_purchase['product_batch_id'];
                
                 $lims_product_warehouse_data->warehouse_id = $data['warehouse_id'];
-                $lims_product_warehouse_data->qty = $qty[$key];
+                $lims_product_warehouse_data->qty = $new_recieved_value;
             }
             //dealing with imei numbers
             if($imei_number[$key]) {

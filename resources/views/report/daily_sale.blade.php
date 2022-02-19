@@ -11,7 +11,7 @@
 			<div class="card-body">
 				{{ Form::open(['route' => ['report.dailySaleByWarehouse', $year, $month], 'method' => 'post', 'id' => 'report-form']) }}
 				<input type="hidden" name="warehouse_id_hidden" value="{{$warehouse_id}}">
-				<h4 class="text-center">{{trans('file.Daily Sale Report')}} &nbsp;&nbsp;
+				<h4 class="text-center">Daily Orders Reports &nbsp;&nbsp;
 				<select class="selectpicker" id="warehouse_id" name="warehouse_id">
 					<option value="0">{{trans('file.All Warehouse')}}</option>
 					@foreach($lims_warehouse_list as $warehouse)

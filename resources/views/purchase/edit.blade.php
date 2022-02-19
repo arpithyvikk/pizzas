@@ -766,26 +766,26 @@ $('#purchase-form').on('submit',function(e){
         e.preventDefault();
     }
 
-    else if($('select[name="status"]').val() != 1)
-    {
-        flag = 0;
-        $(".qty").each(function() {
-            rowindex = $(this).closest('tr').index();
-            quantity =  $(this).val();
-            recieved = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.recieved').val();
+    // else if($('select[name="status"]').val() != 1)
+    // {
+    //     flag = 0;
+    //     $(".qty").each(function() {
+    //         rowindex = $(this).closest('tr').index();
+    //         quantity =  $(this).val();
+    //         recieved = $('table.order-list tbody tr:nth-child(' + (rowindex + 1) + ')').find('.recieved').val();
 
-            if(quantity != recieved){
-                flag = 1;
-                return false;
-            }
-        });
-        if(!flag){
-            alert('Quantity and Recieved value is same! Please Change Purchase Status or Recieved value');
-            e.preventDefault();
-        }
-        else
-            $(".batch-no, .expired-date").prop('disabled', false);
-    }
+    //         if(quantity != recieved){
+    //             flag = 1;
+    //             return false;
+    //         }
+    //     });
+    //     if(!flag){
+    //         alert('Quantity and Recieved value is same! Please Change Purchase Status or Recieved value');
+    //         e.preventDefault();
+    //     }
+    //     else
+    //         $(".batch-no, .expired-date").prop('disabled', false);
+    // }
     else
         $(".batch-no, .expired-date").prop('disabled', false);
 });

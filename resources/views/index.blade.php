@@ -100,12 +100,12 @@
             <div class="brand-text float-left mt-4">
                 <h3>{{trans('file.welcome')}} <span>{{Auth::user()->name}}</span> </h3>
             </div>
-            <div class="filter-toggle btn-group">
+            {{-- <div class="filter-toggle btn-group">
               <button class="btn btn-secondary date-btn" data-start_date="{{date('Y-m-d')}}" data-end_date="{{date('Y-m-d')}}">{{trans('file.Today')}}</button>
               <button class="btn btn-secondary date-btn" data-start_date="{{date('Y-m-d', strtotime(' -7 day'))}}" data-end_date="{{date('Y-m-d')}}">{{trans('file.Last 7 Days')}}</button>
               <button class="btn btn-secondary date-btn active" data-start_date="{{date('Y').'-'.date('m').'-'.'01'}}" data-end_date="{{date('Y-m-d')}}">{{trans('file.This Month')}}</button>
               <button class="btn btn-secondary date-btn" data-start_date="{{date('Y').'-01'.'-01'}}" data-end_date="{{date('Y').'-12'.'-31'}}">{{trans('file.This Year')}}</button>
-            </div>
+            </div> --}}
           </div>
         </div>
       </div>
@@ -119,32 +119,44 @@
                 <div class="col-sm-3">
                   <div class="wrapper count-title text-center">
                     <div class="icon"><i class="dripicons-graph-bar" style="color: #733686"></i></div>
-                    <div class="name"><strong style="color: #733686">{{ trans('file.revenue') }}</strong></div>
-                    <div class="count-number revenue-data">{{number_format((float)$revenue, 2, '.', '')}}</div>
+                    <div class="name"><strong style="color: #733686">Selling Product</strong></div>
+                    <div class="count-number">
+                      @php $count_order = 2 @endphp
+                      {{number_format((float)$count_order, 2, '.', '')}}
+                    </div>
                   </div>
                 </div>
                 <!-- Count item widget-->
                 <div class="col-sm-3">
                   <div class="wrapper count-title text-center">
-                    <div class="icon"><i class="dripicons-return" style="color: #ff8952"></i></div>
-                    <div class="name"><strong style="color: #ff8952">{{trans('file.Sale Return')}}</strong></div>
-                    <div class="count-number return-data">{{number_format((float)$return, 2, '.', '')}}</div>
+                    <div class="icon"><i class="dripicons-cart" style="color: #ff8952"></i></div>
+                    <div class="name"><strong style="color: #ff8952">Purchase Product</strong></div>
+                    <div class="count-number">
+                      @php $count_purchase = 3 @endphp
+                      {{number_format((float)$count_purchase, 2, '.', '')}}
+                    </div>
                   </div>
                 </div>
                 <!-- Count item widget-->
-                {{-- <div class="col-sm-3">
+                <div class="col-sm-3">
                   <div class="wrapper count-title text-center">
-                    <div class="icon"><i class="dripicons-media-loop" style="color: #00c689"></i></div>
-                    <div class="name"><strong style="color: #00c689">{{trans('file.Purchase Return')}}</strong></div>
-                    <div class="count-number purchase_return-data">{{number_format((float)$purchase_return, 2, '.', '')}}</div>
+                    <div class="icon"><i class="dripicons-basket" style="color: #00c689"></i></div>
+                    <div class="name"><strong style="color: #00c689">Available Product</strong></div>
+                    <div class="count-number">
+                      @php $count_product = 10 @endphp
+                      {{number_format((float)$count_product, 2, '.', '')}}
+                    </div>
                   </div>
-                </div> --}}
+                </div>
                 <!-- Count item widget-->
                 <div class="col-sm-3">
                   <div class="wrapper count-title text-center">
-                    <div class="icon"><i class="dripicons-trophy" style="color: #297ff9"></i></div>
-                    <div class="name"><strong style="color: #297ff9">{{trans('file.profit')}}</strong></div>
-                    <div class="count-number profit-data">{{number_format((float)$profit, 2, '.', '')}}</div>
+                    <div class="icon"><i class=" dripicons-graph-pie" style="color: #297ff9"></i></div>
+                    <div class="name"><strong style="color: #297ff9">Menu Item</strong></div>
+                    <div class="count-number profit-data">
+                      @php $count_pizza = 8 @endphp
+                      {{number_format((float)$count_pizza, 2, '.', '')}}
+                    </div>
                   </div>
                 </div>
               </div>

@@ -388,27 +388,27 @@ class OrderController extends Controller
         {   
             if($value != 0) 
             {
-                // $id = $key;
+                $id = $key;
 
-                // $warehouse_data = Product_Warehouse::where([
-                //     ['product_id', '=' , $id],
-                //     ['warehouse_id', '=' ,$request->warehouse_id]
-                // ])->first();
+                $warehouse_data = Product_Warehouse::where([
+                    ['product_id', '=' , $id],
+                    ['warehouse_id', '=' ,$request->warehouse_id]
+                ])->first();
 
-                // if($warehouse_data)
-                // {
-                //     $w_qty = $warehouse_data->qty;
-                //     $total_W_qty = $w_qty - $value;
-                //     $warehouse_data->qty = $total_W_qty;
-                //     $warehouse_data->save();
+                if($warehouse_data)
+                {
+                    $w_qty = $warehouse_data->qty;
+                    $total_W_qty = $w_qty - $value;
+                    $warehouse_data->qty = $total_W_qty;
+                    $warehouse_data->save();
                     
-                //     $p_data = Product::find($id);
-                //     $p_qty = $p_data->qty;
-                //     $total_qty = $p_qty - $value;
-                //     $p_data->qty = $total_qty;
-                //     $p_data->save();
+                    $p_data = Product::find($id);
+                    $p_qty = $p_data->qty;
+                    $total_qty = $p_qty - $value;
+                    $p_data->qty = $total_qty;
+                    $p_data->save();
                     
-                // }              
+                }              
 
             }
         }
