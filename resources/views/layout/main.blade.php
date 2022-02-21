@@ -175,7 +175,7 @@
                     ])->first();
               ?>
               @if($index_permission_active)
-              <li><a href="#pizza" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-circle-o"></i><span>{{trans('file.Pizza')}}</span></a>
+              <li><a href="#pizza" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-graph-pie"></i><span>{{trans('file.Pizza')}}</span></a>
                 <ul id="pizza" class="collapse list-unstyled ">
                   <li id="pizza-list-menu"><a href="{{route('pizzas.index')}}">{{trans('file.Pizza List')}}</a></li>
                   <?php
@@ -202,7 +202,7 @@
                     ])->first();
               ?>
               @if($index_permission_active)
-              <li><a href="#order" aria-expanded="false" data-toggle="collapse"> <i class="fa fa-square-o"></i><span>Orders</span></a>
+              <li><a href="#order" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-shopping-bag"></i><span>Orders</span></a>
                 <ul id="order" class="collapse list-unstyled ">
                   <li id="order-list-menu"><a href="{{route('orders.index')}}">Order List</a></li>
                   <?php

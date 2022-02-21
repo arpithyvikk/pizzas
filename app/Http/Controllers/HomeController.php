@@ -13,14 +13,21 @@ use App\Payroll;
 use App\Quotation;
 use App\Payment;
 use App\Account;
+use App\Category;
 use App\Product_Sale;
 use App\Customer;
+use App\Order;
+use App\Pizza;
 use App\Product;
+use App\ProductPizza;
 use App\RewardPointSetting;
+use App\Unit;
+use App\Warehouse;
 use DB;
 use Auth;
 use Printing;
 use Rawilk\Printing\Contracts\Printer;
+use Srmklive\PayPal\Traits\PayPalAPI\Orders;
 
 /*use vendor\autoload;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
@@ -98,7 +105,12 @@ class HomeController extends Controller
         } finally {
             $printer -> close();
         }*/
+
+      
         if(Auth::user()->role_id == 5) {
+
+
+            $count_purchase_product = Purchase::
             $customer = Customer::select('id', 'points')->where('user_id', Auth::id())->first();
             $lims_sale_data = Sale::with('warehouse')->where('customer_id', $customer->id)->orderBy('created_at', 'desc')->get();
             $lims_payment_data = DB::table('payments')
@@ -117,6 +129,60 @@ class HomeController extends Controller
         $start_date = date("Y").'-'.date("m").'-'.'01';
         $end_date = date("Y").'-'.date("m").'-'.date('t', mktime(0, 0, 0, date("m"), 1, date("Y")));
         $yearly_sale_amount = [];
+
+
+
+        $s_date = date("Y");
+
+        $count_branch =  Warehouse::count();
+        $count_category =  Category::count();
+        $count_product =  Product::count();
+        $count_pizza =  Pizza::count();
+
+        $ordes = Order::where('user_id', Auth::id())->whereYear('created_at', $s_date)->pluck('pizza_id','id')->toArray();
+
+        $pizza_id = array();
+        $pizza_qty = array();
+
+        foreach($ordes as $o_key => $o_value)
+        {
+            $pizza_data = (array)json_decode($o_value);
+
+            foreach($pizza_data as $p_key => $p_value)
+            {
+
+                if(array_key_exists($p_key,$pizza_id))
+                {
+                    $pizza_id[$p_key] += (int)$p_value;
+                }
+                else
+                {
+                    $pizza_id[$p_key] = (int)$p_value;
+                }
+            }
+        }
+
+        $pizzas = Pizza::whereIn('id',array_keys($pizza_id))->get();
+        
+        $result = [];
+
+        foreach($pizzas as $key => $pizza)
+        {
+            $result[$key]['pizza_id'] = $pizza->id;
+            $result[$key]['name'] = $pizza->name;
+            $result[$key]['item'] = $pizza->total_item;
+            $result[$key]['qty'] = 0;
+            if(array_key_exists($pizza->id,$pizza_id)){
+                $result[$key]['qty'] += $pizza_id[$pizza->id];
+            }
+        }
+
+        $keys = array_column($result, 'qty');
+        array_multisort($keys, SORT_DESC, $result);
+
+        $top_selling = $result;
+
+        // dd($top_selling);
 
         $general_setting = DB::table('general_settings')->latest()->first();
         if(Auth::user()->role_id > 2 && $general_setting->staff_access == 'own') {
@@ -306,6 +372,7 @@ class HomeController extends Controller
                 $purchase_return_amount = ReturnPurchase::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->where('user_id', Auth::id())->sum('grand_total');
                 $expense_amount = Expense::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->where('user_id', Auth::id())->sum('amount');
                 $payroll_amount = Payroll::whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->where('user_id', Auth::id())->sum('amount');
+                
             }
             else {
                 $recieved_amount = DB::table('payments')->whereNotNull('sale_id')->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('amount');
@@ -342,7 +409,24 @@ class HomeController extends Controller
             $start = strtotime("+1 month", $start);
         }
         //return $month;
-        return view('index', compact('revenue', 'expense', 'return', 'purchase_return', 'profit', 'payment_recieved', 'payment_sent', 'month', 'yearly_sale_amount', 'recent_sale', 'recent_purchase', 'recent_quotation', 'recent_payment', 'best_selling_qty', 'yearly_best_selling_qty', 'yearly_best_selling_price'));
+        return view('index', compact('top_selling','count_branch','count_category','count_product','count_pizza','revenue', 'expense', 'return', 'purchase_return', 'profit', 'payment_recieved', 'payment_sent', 'month', 'yearly_sale_amount', 'recent_sale', 'recent_purchase', 'recent_quotation', 'recent_payment', 'best_selling_qty', 'yearly_best_selling_qty', 'yearly_best_selling_price'));
+    }
+
+    public function productPizzaData($pizza_id)
+    {
+        $lims_product_pizza_data = ProductPizza::where('pizza_id', $pizza_id)->get();
+
+        foreach ($lims_product_pizza_data as $key => $product_pizza_data) {
+            
+            $product = Product::find($product_pizza_data->product_id);
+
+            $unit = Unit::find($product->sale_unit_id);
+
+            $product_pizza[0][$key] = $product->name;
+            $product_pizza[1][$key] = $product_pizza_data->qty;
+            $product_pizza[2][$key] = $unit->unit_name;
+        }
+        return $product_pizza;
     }
 
     public function dashboardFilter($start_date, $end_date)

@@ -39,7 +39,7 @@
                             $unit_code = $lims_product_purchase_data->unit_code;
 
                     @endphp
-                    <th>{{$unit_code}}</th>
+                    <td>{{$unit_code}}</td>
                 </tr>
                 @endforeach
             </tbody>

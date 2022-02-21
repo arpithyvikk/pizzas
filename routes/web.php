@@ -325,6 +325,8 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 	Route::resource('currency', 'CurrencyController');
 
 	Route::get('/home', 'HomeController@index')->name('home');
+	Route::get('/home/pizza_data/{pizza_id}', 'HomeController@productPizzaData')->name('home');
+
 	Route::get('my-transactions/{year}/{month}', 'HomeController@myTransaction');
 });
 
