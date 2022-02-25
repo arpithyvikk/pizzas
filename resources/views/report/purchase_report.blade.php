@@ -53,15 +53,18 @@
                 <tr>
                     <th class="not-exported"></th>
                     <th>{{trans('file.Product Name')}}</th>
-                    <th>{{trans('file.Purchased Amount')}}</th>
+                    {{-- <th>{{trans('file.Purchased Amount')}}</th> --}}
                     <th>{{trans('file.Purchased Qty')}}</th>
                     <th>{{trans('file.In Stock')}}</th>
+                    <th>Unit</th>
                 </tr>
             </thead>
             <tbody>
+                
                 @if(!empty($product_name))
                 @foreach($product_id as $key => $pro_id)
                 <tr>
+
                     <td>{{$key}}</td>
                     <td>{{$product_name[$key]}}</td>
                     <?php
@@ -116,6 +119,14 @@
                             }
                         }
                         $purchased_qty = 0;
+                        
+                        $lims_product_purchase_data = DB::table('units')->select('unit_code')
+                                    ->join('product_purchases', 'units.id', '=', 'product_purchases.purchase_unit_id')
+                                    ->where('product_purchases.product_id', $pro_id)
+                                    ->first();
+                        
+                        $unit_code = $lims_product_purchase_data->unit_code;
+                        
                         foreach ($product_purchase_data as $product_purchase) {
                             $unit = DB::table('units')->find($product_purchase->purchase_unit_id);
                             if($unit->operator == '*'){
@@ -124,22 +135,18 @@
                             elseif($unit->operator == '/'){
                                 $purchased_qty += $product_purchase->qty / $unit->operation_value;
                             }
+
                         }
                     ?>
-                    <td>{{number_format((float)$purchased_cost, 2, '.', '')}}</td>
+                    {{-- <td>{{number_format((float)$purchased_cost, 2, '.', '')}}</td> --}}
                     <td>{{$purchased_qty}}</td>
                     <td>{{$product_qty[$key]}}</td>
+                    <td>{{$unit_code}}</td>
                 </tr>
                 @endforeach
                 @endif
             </tbody>
-            <tfoot>
-                <th></th>
-                <th>Total</th>
-                <th>0.00</th>
-                <th>0</th>
-                <th>0</th>
-            </tfoot>
+            
         </table>
     </div>
 </section>

@@ -176,6 +176,11 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 
 
 	//for orrders
+	Route::post('orders/order-data', 'OrderController@orderData')->name('order.data');
+	Route::get('orders/product_order/{id}','OrderController@productOrderData');
+	Route::get('orders/pizza_order/{id}','OrderController@pizzaOrderData');
+	Route::get('orders/order_by_csv', 'OrderController@orderByCsv');
+	Route::post('importorder', 'OrderController@importOrder')->name('order.import');
 	Route::resource('orders', 'OrderController');
 
 
@@ -213,6 +218,8 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 	Route::post('report/warehouse_stock', 'ReportController@warehouseStockById')->name('report.warehouseStock');
 	Route::get('report/daily_sale/{year}/{month}', 'ReportController@dailySale');
 	Route::post('report/daily_sale/{year}/{month}', 'ReportController@dailySaleByWarehouse')->name('report.dailySaleByWarehouse');
+	Route::get('report/daily_sale_order/{orderdate}/{warehouse_id}', 'ReportController@OrderData');
+
 	Route::get('report/monthly_sale/{year}', 'ReportController@monthlySale');
 	Route::post('report/monthly_sale/{year}', 'ReportController@monthlySaleByWarehouse')->name('report.monthlySaleByWarehouse');
 	Route::get('report/daily_purchase/{year}/{month}', 'ReportController@dailyPurchase');
@@ -318,6 +325,8 @@ Route::group(['middleware' => ['auth', 'active']], function() {
 	Route::resource('currency', 'CurrencyController');
 
 	Route::get('/home', 'HomeController@index')->name('home');
+	Route::get('/home/pizza_data/{pizza_id}', 'HomeController@productPizzaData')->name('home');
+
 	Route::get('my-transactions/{year}/{month}', 'HomeController@myTransaction');
 });
 

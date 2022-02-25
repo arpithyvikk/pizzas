@@ -24,39 +24,12 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Pizza Size *</label>
-                                            <select required name="size" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select pizza size...">
-                                                <option value="s" {{$lims_pizza_data->size == 's' ? 'selected' : ''}}>Regular</option>
-                                                <option value="m" {{$lims_pizza_data->size == 'm' ? 'selected' : ''}}>Medium</option>
-                                                <option value="l" {{$lims_pizza_data->size == 'l' ? 'selected' : ''}}>Large</option>
-                                            </select>
+                                            <label>Pizza Code *</label>
+                                            <input type="text" name="code" class="form-control" value="{{$lims_pizza_data->code}}">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Pizza Crust *</label>
-                                            <select required name="crust_type" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select crust...">
-                                                <option value="c1" {{$lims_pizza_data->crust_type == 'c1' ? 'selected' : ''}}>New Hand Tossed</option>
-                                                <option value="c2" {{$lims_pizza_data->crust_type == 'c2' ? 'selected' : ''}}>100% Wheat Thin Crust</option>
-                                                <option value="c3" {{$lims_pizza_data->crust_type == 'c3' ? 'selected' : ''}}>Cheese Burst</option>
-                                                <option value="c4" {{$lims_pizza_data->crust_type == 'c4' ? 'selected' : ''}}>Fresh Pan Pizza</option>
-                                                <option value="c5" {{$lims_pizza_data->crust_type == 'c5' ? 'selected' : ''}}>Classic Hand Tossed</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Pizza Image</label> <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
-                                            <input type="file" name="img" class="form-control" >
-                                            @if($errors->has('extension'))
-                                                <span>
-                                                   <strong>{{ $errors->first('extension') }}</strong>
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
                                     <div class="col-md-12 mt-3">
                                         <label>Select Pizza Ingredients</label>
                                         <div class="search-box input-group">
@@ -116,7 +89,7 @@
 
                                                         $product_batch_data = \App\ProductBatch::select('batch_no', 'expired_date')->find($product_pizza->product_batch_id);
                                                     ?>
-                                                        <td>{{$product_data->name}} <button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button> </td>
+                                                        <td>{{$product_data->name}}  </td>
                                                         <td><input type="number" class="form-control qty" name="qty[]" value="{{$product_pizza->qty}}" step="any" required /></td>
                                                         <td>{{$p_units->unit_name}}</td>
                                                        
@@ -134,22 +107,7 @@
                                     </div>
                                 </div>
                                 
-                                <div class="row mt-5">
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <label>{{trans('file.Note')}}</label>
-                                            <textarea rows="3" class="form-control" name="note">{{$lims_pizza_data->note}}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>
-                                                <strong>Pizza Price</strong>
-                                            </label>
-                                            <input type="number" name="price" class="form-control" step="any" value="{{$lims_pizza_data->price}}"/>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                                
                                 <div class="form-group">
                                     <input type="submit" value="Update" class="btn btn-primary" id="submit-button">
@@ -514,7 +472,7 @@ function productSearch(data) {
                     var newRow = $("<tr>");
                     var cols = '';
                     temp_unit_name = (data[6]).split(',');
-                    cols += '<td>' + data[0] + '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
+                    cols += '<td>' + data[0] + '</td>';
                     // cols += '<td>' + data[1] + '</td>';
                     cols += '<td><input type="number" class="form-control qty" name="qty[]" value="1" step="any" required/></td>';
                     cols += '<td>' + temp_unit_name[0] + ' </td>';

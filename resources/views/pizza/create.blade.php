@@ -24,39 +24,12 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label>Pizza Size *</label>
-                                            <select required name="size" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select pizza size...">
-                                                <option value="s">Regular</option>
-                                                <option value="m">Medium</option>
-                                                <option value="l">Large</option>
-                                            </select>
+                                            <label>Code</label>
+                                            <input type="text" name="code" class="form-control" >
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Pizza Crust *</label>
-                                            <select required name="crust_type" class="selectpicker form-control" data-live-search="true" data-live-search-style="begins" title="Select crust...">
-                                                <option value="c1">New Hand Tossed</option>
-                                                <option value="c2">100% Wheat Thin Crust</option>
-                                                <option value="c3">Cheese Burst</option>
-                                                <option value="c4">Fresh Pan Pizza</option>
-                                                <option value="c5">Classic Hand Tossed</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Pizza Image</label> <i class="dripicons-question" data-toggle="tooltip" title="Only jpg, jpeg, png, gif, pdf, csv, docx, xlsx and txt file is supported"></i>
-                                            <input type="file" name="document" class="form-control" >
-                                            @if($errors->has('extension'))
-                                                <span>
-                                                   <strong>{{ $errors->first('extension') }}</strong>
-                                                </span>
-                                            @endif
-                                        </div>
-                                    </div>
                                     <div class="col-md-12 mt-3">
                                         <label>Select Pizza Ingredients</label>
                                         <div class="search-box input-group">
@@ -75,31 +48,12 @@
                                                         <th>{{trans('file.name')}}</th>
                                                         <th>{{trans('file.Quantity')}}</th>
                                                         <th>Unit Type</th>
-                                                        <th><i class="dripicons-trash"></i></th>
+                                                        <th>Remove</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                 </tbody>
                                             </table>
-                                        </div>
-                                    </div>
-                                </div>
-                             
-                                <div class="row mt-3">
-                                    
-                                    <div class="col-md-8">
-                                        <div class="form-group">
-                                            <label>{{trans('file.Note')}}</label>
-                                            <textarea rows="3" class="form-control" name="note"></textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>
-                                                <strong>Pizza Price</strong>
-                                            </label>
-                                            <input type="number" name="price" class="form-control" step="any" />
                                         </div>
                                     </div>
                                 </div>
@@ -429,7 +383,7 @@
                     var newRow = $("<tr>");
                     var cols = '';
                     temp_unit_name = (data[6]).split(',');
-                    cols += '<td>' + data[0] + '<button type="button" class="edit-product btn btn-link" data-toggle="modal" data-target="#editModal"> <i class="dripicons-document-edit"></i></button></td>';
+                    cols += '<td>' + data[0] + '</td>';
                     // cols += '<td>' + data[1] + '</td>';
                     cols += '<td><input type="number" class="form-control qty" name="qty[]" value="1" step="any" required/></td>';
                     cols += '<td>' + temp_unit_name[0] + ' </td>';
@@ -453,7 +407,7 @@
                     // cols += '<td class="tax"></td>';
                     // cols += '<td class="sub-total"></td>';
                     // cols += '<input type="hidden" class="sale-unit" name="unit[]" value="' + temp_unit_name[0] + '"/>';
-                    cols += '<td><button type="button" class="ibtnDel btn btn-md btn-danger">{{trans("file.delete")}}</button></td>';
+                    cols += '<td><button type="button" class="ibtnDel btn btn-sm btn-danger"><i class="dripicons-trash"></i></button></td>';
                     // cols += '<input type="hidden" class="product-code" name="product_code[]" value="' + data[1] + '"/>';
                     cols += '<input type="hidden" class="product-id" name="product_id[]" value="' + data[9] + '"/>';
                     // cols += '<input type="hidden" class="net_unit_cost" name="net_unit_cost[]" />';

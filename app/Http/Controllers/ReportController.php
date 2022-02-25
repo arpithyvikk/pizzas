@@ -23,11 +23,15 @@ use App\Expense;
 use App\Payroll;
 use App\User;
 use App\Customer;
+use App\Order;
+use App\Pizza;
 use App\Supplier;
 use App\Variant;
 use App\ProductVariant;
+use App\Unit;
 use DB;
 use Auth;
+use phpDocumentor\Reflection\Types\Null_;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -37,7 +41,7 @@ class ReportController extends Controller
     {
         $role = Role::find(Auth::user()->role_id);
         if($role->hasPermissionTo('product-qty-alert')){
-            $lims_product_data = Product::select('name','code', 'image', 'qty', 'alert_quantity')->where('is_active', true)->whereColumn('alert_quantity', '>', 'qty')->get();
+            $lims_product_data = Product::select('name','code', 'image', 'qty', 'alert_quantity','unit_id')->where('is_active', true)->whereColumn('alert_quantity', '>', 'qty')->get();
             return view('report.qty_alert_report', compact('lims_product_data'));
         }
         else
@@ -106,6 +110,7 @@ class ReportController extends Controller
     {
         $role = Role::find(Auth::user()->role_id);
         if($role->hasPermissionTo('daily-sale')){
+         
             $start = 1;
             $number_of_day = date('t', mktime(0, 0, 0, $month, 1, $year));
             while($start <= $number_of_day)
@@ -114,6 +119,7 @@ class ReportController extends Controller
                     $date = $year.'-'.$month.'-0'.$start;
                 else
                     $date = $year.'-'.$month.'-'.$start;
+
                 $query1 = array(
                     'SUM(total_discount) AS total_discount',
                     'SUM(order_discount) AS order_discount',
@@ -122,13 +128,36 @@ class ReportController extends Controller
                     'SUM(shipping_cost) AS shipping_cost',
                     'SUM(grand_total) AS grand_total'
                 );
+
                 $sale_data = Sale::whereDate('created_at', $date)->selectRaw(implode(',', $query1))->get();
+
                 $total_discount[$start] = $sale_data[0]->total_discount;
                 $order_discount[$start] = $sale_data[0]->order_discount;
                 $total_tax[$start] = $sale_data[0]->total_tax;
                 $order_tax[$start] = $sale_data[0]->order_tax;
                 $shipping_cost[$start] = $sale_data[0]->shipping_cost;
                 $grand_total[$start] = $sale_data[0]->grand_total;
+               
+                $orders = Order::where('order_date', $date)->get();
+
+                $pizza_id = []; 
+
+                if($orders)
+                {
+                    foreach ($orders as $key => $order) {
+
+                        $index_data =array();
+
+                        $index_data = (array)json_decode($order->pizza_id);
+
+                        $form = count($index_data);
+                        
+                        $pizza_id[] = $form;
+                    }
+
+                    $order_date[$start] = array_sum($pizza_id);
+                }
+
                 $start++;
             }
             $start_day = date('w', strtotime($year.'-'.$month.'-01')) + 1;
@@ -136,9 +165,12 @@ class ReportController extends Controller
             $prev_month = date('m', strtotime('-1 month', strtotime($year.'-'.$month.'-01')));
             $next_year = date('Y', strtotime('+1 month', strtotime($year.'-'.$month.'-01')));
             $next_month = date('m', strtotime('+1 month', strtotime($year.'-'.$month.'-01')));
+
             $lims_warehouse_list = Warehouse::where('is_active', true)->get();
+
             $warehouse_id = 0;
-            return view('report.daily_sale', compact('total_discount','order_discount', 'total_tax', 'order_tax', 'shipping_cost', 'grand_total', 'start_day', 'year', 'month', 'number_of_day', 'prev_year', 'prev_month', 'next_year', 'next_month', 'lims_warehouse_list', 'warehouse_id'));
+
+            return view('report.daily_sale', compact('order_date','total_discount','order_discount', 'total_tax', 'order_tax', 'shipping_cost', 'grand_total', 'start_day', 'year', 'month', 'number_of_day', 'prev_year', 'prev_month', 'next_year', 'next_month', 'lims_warehouse_list', 'warehouse_id'));
         }
         else
             return redirect()->back()->with('not_permitted', 'Sorry! You are not allowed to access this module');
@@ -165,6 +197,7 @@ class ReportController extends Controller
                 'SUM(shipping_cost) AS shipping_cost',
                 'SUM(grand_total) AS grand_total'
             );
+
             $sale_data = Sale::where('warehouse_id', $data['warehouse_id'])->whereDate('created_at', $date)->selectRaw(implode(',', $query1))->get();
             $total_discount[$start] = $sale_data[0]->total_discount;
             $order_discount[$start] = $sale_data[0]->order_discount;
@@ -172,6 +205,26 @@ class ReportController extends Controller
             $order_tax[$start] = $sale_data[0]->order_tax;
             $shipping_cost[$start] = $sale_data[0]->shipping_cost;
             $grand_total[$start] = $sale_data[0]->grand_total;
+
+            $orders = Order::where('warehouse_id', $data['warehouse_id'])->where('order_date', $date)->get();
+
+            $pizza_id = []; 
+
+            if($orders)
+            {
+                foreach ($orders as $key => $order) {
+
+                    $index_data =array();
+
+                    $index_data = (array)json_decode($order->pizza_id);
+
+                    $form = count($index_data);
+                    
+                    $pizza_id[] = $form;
+                }
+
+                $order_date[$start] = array_sum($pizza_id);
+            }
             $start++;
         }
         $start_day = date('w', strtotime($year.'-'.$month.'-01')) + 1;
@@ -181,8 +234,37 @@ class ReportController extends Controller
         $next_month = date('m', strtotime('+1 month', strtotime($year.'-'.$month.'-01')));
         $lims_warehouse_list = Warehouse::where('is_active', true)->get();
         $warehouse_id = $data['warehouse_id'];
-        return view('report.daily_sale', compact('total_discount','order_discount', 'total_tax', 'order_tax', 'shipping_cost', 'grand_total', 'start_day', 'year', 'month', 'number_of_day', 'prev_year', 'prev_month', 'next_year', 'next_month', 'lims_warehouse_list', 'warehouse_id'));
 
+        return view('report.daily_sale', compact('order_date','total_discount','order_discount', 'total_tax', 'order_tax', 'shipping_cost', 'grand_total', 'start_day', 'year', 'month', 'number_of_day', 'prev_year', 'prev_month', 'next_year', 'next_month', 'lims_warehouse_list', 'warehouse_id'));
+
+    }
+
+
+    public function OrderData($orderdate, $warehouse_id)
+    {
+
+        if($warehouse_id !=0)
+        {
+            $lims_product_pizza_data = Order::where('order_date', $orderdate)->where('warehouse_id','=',$warehouse_id)->get();
+        }
+        else
+        {
+            $lims_product_pizza_data = Order::where('order_date', $orderdate)->get();
+        }
+
+        foreach ($lims_product_pizza_data as $key => $product_pizza_data) {
+            
+            $pizza_id = $product_pizza_data->pizza_id;
+            $pizza_data = (array)json_decode($pizza_id);
+
+            foreach($pizza_data as $pkey => $pvalue)
+            {
+                $pizzas = Pizza::where('id',$pkey)->first(); 
+                $product_pizza[0][] = $pizzas->name;
+                $product_pizza[1][] = $pizza_data[$pkey];
+            }
+        }
+        return $product_pizza;
     }
 
     public function dailyPurchase($year, $month)
@@ -516,6 +598,7 @@ class ReportController extends Controller
             $purchased_qty = 0;
             $purchased_amount = 0;
             $purchased_tax = 0;
+            
             $sold_qty = $product_sale->sold_qty;
             $product_revenue += $product_sale->sold_amount;
             foreach ($product_purchase_data as $key => $product_purchase) {
@@ -652,7 +735,7 @@ class ReportController extends Controller
                 ['name', 'LIKE', "%{$search}%"],
                 ['is_active', true]
             ])->count();
-            $lims_product_all = Product::select('id', 'name', 'qty', 'is_variant')
+            $lims_product_all = Product::select('id', 'name', 'qty', 'is_variant','purchase_unit_id')
                                 ->where([
                                     ['name', 'LIKE', "%{$search}%"],
                                     ['is_active', true]
@@ -663,17 +746,18 @@ class ReportController extends Controller
         }
         else {
             $totalData = Product::where('is_active', true)->count();
-            $lims_product_all = Product::select('id', 'name', 'qty', 'is_variant')
+            $lims_product_all = Product::select('id', 'name', 'qty', 'is_variant','purchase_unit_id')
                                 ->where('is_active', true)
                                 ->offset($start)
                                 ->limit($limit)
                                 ->orderBy($order, $dir)
                                 ->get();
         }
-
         $totalFiltered = $totalData; 
         $data = [];
-        foreach ($lims_product_all as $product) {           
+        foreach ($lims_product_all as $product) {     
+            
+
             $variant_id_all = [];
             if($warehouse_id == 0) {
                 if($product->is_variant) {
@@ -696,6 +780,7 @@ class ReportController extends Controller
 
                         $purchased_qty = 0;
                         if(count($lims_product_purchase_data)) {
+
                             foreach ($lims_product_purchase_data as $product_purchase) {
                                 $unit = DB::table('units')->find($product_purchase->purchase_unit_id);
                                 if($unit->operator == '*'){
@@ -706,7 +791,15 @@ class ReportController extends Controller
                                 }
                             }
                         }
+
+
                         $nestedData['purchased_qty'] = $purchased_qty;
+
+
+                        $lims_product_purchase_data = Unit::select('unit_code')->where('id', $product->puchase_unit_id)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->get();
+
+                        $nestedData['unit_code'] = $product->getunits->unit_code;
+
                         //transfer data
                         /*$nestedData['transfered_amount'] = ProductTransfer::where([
                                                 ['product_id', $product->id],
@@ -832,13 +925,22 @@ class ReportController extends Controller
                             $unit = DB::table('units')->find($product_purchase->purchase_unit_id);
                             if($unit->operator == '*'){
                                 $purchased_qty += $product_purchase->qty * $unit->operation_value;
-                            }
+                             }
                             elseif($unit->operator == '/'){
                                 $purchased_qty += $product_purchase->qty / $unit->operation_value;
                             }
+                            $unit = $unit->unit_code;
                         }
                     }
+
+                    $lims_product_purchase_data = Unit::select('unit_code')->where('id', $product->puchase_unit_id)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->get();
+
+                    $nestedData['unit_code'] = $product->getunits->unit_code;
+                    
                     $nestedData['purchased_qty'] = $purchased_qty;
+
+                  
+
                     //transfer data
                     /*$nestedData['transfered_amount'] = ProductTransfer::where('product_id', $product->id)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->sum('total');
 
@@ -960,6 +1062,10 @@ class ReportController extends Controller
                                 }
                             }
                         }
+                        $lims_product_purchase_data = Unit::select('unit_code')->where('id', $product->puchase_unit_id)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->get();
+
+                        $nestedData['unit_code'] = $product->getunits->unit_code;
+
                         $nestedData['purchased_qty'] = $purchased_qty;
                         //transfer data
                         /*$nestedData['transfered_amount'] = DB::table('transfers')
@@ -1143,6 +1249,11 @@ class ReportController extends Controller
                             }
                         }
                     }
+
+                    $lims_product_purchase_data = Unit::select('unit_code')->where('id', $product->puchase_unit_id)->whereDate('created_at', '>=' , $start_date)->whereDate('created_at', '<=' , $end_date)->get();
+
+                    $nestedData['unit_code'] = $product->getunits->unit_code;
+
                     $nestedData['purchased_qty'] = $purchased_qty;
                     //transfer data
                     /*$nestedData['transfered_amount'] = DB::table('transfers')

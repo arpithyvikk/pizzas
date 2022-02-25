@@ -14,6 +14,7 @@
                     <th>{{trans('file.Product Code')}}</th>
                     <th>{{trans('file.Quantity')}}</th>
                     <th>{{trans('file.Alert Quantity')}}</th>
+                    <th>Unit</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,12 +26,20 @@
                         $images = explode(",", $product->image);
                         $product->base_image = $images[0];
                     ?>
-                        <img src="{{url('public/images/product',$product->base_image)}}" height="80" width="80">
+                        <img src="{{url('images/product',$product->base_image)}}" height="80" width="80">
                     </td>
                     <td>{{$product->name}}</td>
                     <td>{{$product->code}}</td>
                     <td>{{number_format((float)($product->qty), 2, '.', '')}}</td>
                     <td>{{number_format((float)($product->alert_quantity), 2, '.', '')}}</td>
+                    @php
+                        $lims_product_purchase_data = DB::table('units')->select('unit_code')
+                            ->where('id', $product->unit_id)
+                            ->first();    
+                            $unit_code = $lims_product_purchase_data->unit_code;
+
+                    @endphp
+                    <td>{{$unit_code}}</td>
                 </tr>
                 @endforeach
             </tbody>
